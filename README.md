@@ -16,3 +16,9 @@ The model we will be using is called SUMMA (Structure for Unifying Multiple Mode
 ### **Data:** 
 1. The dataset will be from NRCS (National Resource Conservation Service) SNOTEL (Snow Telemetry) weather stations throughout Washington. We will use a tool called metloom to efficiently access this data. See documentation [here](https://metloom.readthedocs.io/en/latest/). A map of all the sites in the Western United States and Canada is available [here](https://nwcc-apps.sc.egov.usda.gov/imap/).
 2. If we go the forecasting route, we will plan to use this python package called Herbie to dynamically download weather model data. See documentation [here](https://herbie.readthedocs.io/en/stable/). Another option is [open-meteo](https://open-meteo.com/en/docs/ecmwf-api).
+
+#### **Team:**
+Danny Hogan, Civil and Environmental Engineering (lead)
+Bow Sruangsung, Civil and Environmental Engineering
+Xiayang Tang, iSchool
+Jane Dai, School of Public Health
