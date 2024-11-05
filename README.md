@@ -20,3 +20,9 @@ The model we will be using is called SUMMA (Structure for Unifying Multiple Mode
 ### **Data Visualization**
 
 Using Streamlit as a tool to visual data
+
+#### **Team:**
+Danny Hogan, Civil and Environmental Engineering (lead)
+Bow Sruangsung, Civil and Environmental Engineering
+Xiayang Tang, iSchool
+Jane Dai, School of Public Health
