@@ -99,6 +99,15 @@
 **Ryan** leads snowshoeing tours in the Cascades. He wants daily snow conditions for popular trails to plan safe routes and advise clients on appropriate gear. Ryan values a straightforward app interface with mobile compatibility for quick field checks.
 
 ---
+## 23. Graduate Student #1
+
+**Ash** is a graduate student at UW who has never dabbled in snow sports, having grown up in Hawai'i. Since he has lots of nervous energy, he wants to be able to refresh a page daily to see if his first-ever upcoming group snowshoe trip might be during fair conditions. He wants to interact minimally with the page, relying on visual cues to have a "gut reaction" to snowpack conditions. Normally he works with a lot of data at work (and has a background in data visualization), but this is one thing in his life where he wants to not do no internal data processing. 
+
+---
+## 24. Graduate Student #2
+**Juan** is wildlife photographer who often goes on stake-outs for 6-8 hours at a time. He wants to check for stable snowpacks in Eastern Washington, and learn the area's humidity and temperature to prepare appropriate stake-out clothing attire. He wants a simple and concise summary of this information when identifying photography sites. Juan's job does not involve technical data skills (outside of image processing) and thus will appreciate simplicity (but not glossing over important details). 
+
+---
 # Functional Specification for MoSnoPro-US
 
 | User                                           | Knowledge                                                                                                           | Needs                                                                                                                 | Information Users Want                                                                                                                                                         | Use Cases                                                                                                                                                                                                                                  |
