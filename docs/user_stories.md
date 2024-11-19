@@ -1,5 +1,3 @@
-# User Stories
-
 # User Stories for MoSnoPro-US Project
 
 ## 1. Data Analyst
