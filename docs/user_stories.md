@@ -17,3 +17,21 @@ This implied user is the model itself.
 - Provide advanced features? 
 - Remove informaton about how the data is hosted 
 
+# User Interfaces
+### Map
+- What it does: displays geography of Washington State. Displays sites where model data is available. Interactive.
+- Inputs:
+	- location data of sites
+	- point-and-click command
+- Outputs
+	- hover feature: output of station metadata
+	- click feature: outputs the model visualization.
+- Components used
+	- Map, station database, visualization database, user input point/click
+- Side Effects
+	- Filled blank space opposite of the map upon click
+	- Site metadata appears upon hover on map next to station
+### Data Filtering
+- What it does: provide the user with a few different options for what data is displayed. 
+### Model Data Bridge
+
