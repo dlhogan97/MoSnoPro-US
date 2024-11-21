@@ -14,7 +14,17 @@
 	- Site metadata (summary) appears upon hover on map next to station
 
 ### Data Filtering
-- What it does: provide the user with a few different options for what data is displayed.
+- What it does: provide the user with a few different options for what data is displayed. Allows customization based on location and snowpack attributes (filter out based the dangerous level, or based on the specific location )
+- Inputs:
+	- Users select specific sites through dropdown or multi-select list 
+	- Users choose which specific snowpack properties to focus on (danger level)
+- Outputs
+	- Filtered Data for Visualizations: the filtered dataset will be passed to the visualization components to update the display dynamically
+	- Interactive Display Updates: when the user adjusts filters, visualizations update immediately to reflect the selected parameters.
+- Components used
+	- Map, station database, visualization database, user input point/click
+- Side Effects
+	- Highlight the sites selected. Grey down the sites not selected.
 
 ### Model Data Bridge
 - 
