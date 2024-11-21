@@ -1,3 +1,8 @@
+## 11-21
+**Group-work during class**
+- Note from Bryna: can be helpful to start high-level and work downwards to identify/specify the bit-sized components
+- Focused on creating and merging changes to the *new* `component_specifications` file in /docs
+
 ## 11-19
 **Brainstorming site infrastructure**
 - SUMMA is pulling weather data, but it can also be fed directly into the site (eg, weather, humidity) for users to access
