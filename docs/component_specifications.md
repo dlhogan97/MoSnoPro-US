@@ -18,3 +18,35 @@
 
 ### Model Data Bridge
 - 
+
+### Data Manager
+
+- Description:
+The Data Manager handles the acquisition, storage, and preprocessing of snow, weather, and traffic-related data. It provides an interface for querying subsets of the data based on user-defined filters and ensures data integrity across the system.
+- Inputs:
+	- Raw datasets (e.g., snowfall, snowplow activity, traffic incidents) in formats such as CSV, JSON, or through APIs.
+	- Query parameters (e.g., date ranges, locations, and metrics to filter).
+- Outputs:
+	- Cleaned and filtered datasets, structured as DataFrames.
+	- Metadata about data quality (e.g., last update, missing values).
+### Visualization Manager
+
+- Description:
+The Visualization Manager is responsible for creating interactive and static visualizations based on processed data. It supports both predefined visualizations (e.g., heatmaps, trend graphs) and custom plots based on user needs.
+- Inputs:
+	- DataFrames from the Data Manager.
+	- User preferences for visualizations (e.g., graph type, axis labels, themes).
+- Outputs:
+	- Interactive dashboards or static plots in formats such as PNG or SVG.
+	- Embeddable components for integration into reports or presentations.
+### Decision Support Module
+
+- Description:
+The Decision Support Module provides actionable insights based on processed data and user requirements. It includes features like generating alerts, ranking scenarios, and offering summaries tailored to specific use cases (e.g., public communication or safety decisions).
+- Inputs:
+	- Processed data from the Data Manager.
+	- Predefined thresholds or rules (e.g., snow accumulation levels for closures).
+	- User queries (e.g., “areas with highest snow accumulation”).
+- Outputs:
+	- Textual summaries or alerts (e.g., “High snowfall detected in Zone X”).
+	- Decision matrices or ranked lists for high-impact recommendations.
