@@ -99,13 +99,31 @@
 **Ryan** leads snowshoeing tours in the Cascades. He wants daily snow conditions for popular trails to plan safe routes and advise clients on appropriate gear. Ryan values a straightforward app interface with mobile compatibility for quick field checks.
 
 ---
-## 23. Graduate Student #1
+
+## 18. Graduate Student #1
 
 **Ash** is a graduate student at UW who has never dabbled in snow sports, having grown up in Hawai'i. Since he has lots of nervous energy, he wants to be able to refresh a page daily to see if his first-ever upcoming group snowshoe trip might be during fair conditions. He wants to interact minimally with the page, relying on visual cues to have a "gut reaction" to snowpack conditions. Normally he works with a lot of data at work (and has a background in data visualization), but this is one thing in his life where he wants to not do no internal data processing. 
 
 ---
-## 24. Graduate Student #2
-**Juan** is wildlife photographer who often goes on stake-outs for 6-8 hours at a time. He wants to check for stable snowpacks in Eastern Washington, and learn the area's humidity and temperature to prepare appropriate stake-out clothing attire. He wants a simple and concise summary of this information when identifying photography sites. Juan's job does not involve technical data skills (outside of image processing) and thus will appreciate simplicity (but not glossing over important details). 
+
+## 19. Graduate Student #2
+**Juan** is a wildlife photographer who often goes on stake-outs for 6-8 hours at a time. He wants to check for stable snowpacks in Eastern Washington, and learn the area's humidity and temperature to prepare appropriate stake-out clothing attire. He wants a simple and concise summary of this information when identifying photography sites. Juan's job does not involve technical data skills (outside of image processing) and thus will appreciate simplicity (but not glossing over important details). 
+
+---
+
+## 20. Communications staff at WSDOT
+**Tim** works for WSDOT and has been tasked to design content for the department's newest Instagram post. Since many backcountry skiiers have reached out to ask about safety closures following the bomb cyclone, he needs to find a source of information that he can check regularly without having to wait for results to be generated. He wants a simple overview of the situation where large amounts of snow have accumulated so that he can mark-up his own version of a WA state map to disseminate to non-technical audiences on social media. Tim's role as a front-facing, public communicator does not involve technical data skills. Since he also has no background in weather or safety science, he would also appreciate additional resources (like the Northwest Avalanche Center) that he can consult before making his final communication deliverable. 
+
+---
+
+## 21. Very busy, very stressed parent
+**Pav** works two jobs and has been planning to take his 8-year-old daughter out for her first snowboarding adventure of the season. His partner was unexpectedly called away for a work emergency, and so he is unsure if he alone can handle the chaos of an all-day trek to the mountains on top of all the weather uncertainty. He does not have time to call the ski resort (only to be put on hold), so he needs a site he can check easily to get a quick decision aid. Because he has so much to juggle on his daily plate, he is looking for a "single click, immediate information" type of interaction. 
+
+---
+
+## 22. Ski Resort Workers' Union Organizer
+
+**Ellen** organizes the union of ski resort workers at Stevens Pass, a supermajority of which have authorized a strike. They need to identify a high-impact strike time, which should coincide with the busiest weekend of the snow sport season. They need to proxy that traffic data using data from a year ago in conjunction with weather data so they don't actively endanger guests when the snowpack isn't safe. Ellen has a background in data science and is familiar with interpreting graphs that visualize longitudinal data. Ellen would also like to easily share the source data with other organizers who may be more familiar with the subject area. 
 
 ---
 # Functional Specification for MoSnoPro-US
@@ -131,22 +149,3 @@ This implied user is the model itself.
 - Give default products for simple use cases
 - Provide advanced features? 
 - Remove informaton about how the data is hosted 
-
-# User Interfaces
-### Map
-- What it does: displays geography of Washington State. Displays sites where model data is available. Interactive.
-- Inputs:
-	- location data of sites
-	- point-and-click command
-- Outputs
-	- hover feature: output of station metadata
-	- click feature: outputs the model visualization.
-- Components used
-	- Map, station database, visualization database, user input point/click
-- Side Effects
-	- Filled blank space opposite of the map upon click
-	- Site metadata appears upon hover on map next to station
-### Data Filtering
-- What it does: provide the user with a few different options for what data is displayed. 
-### Model Data Bridge
-
