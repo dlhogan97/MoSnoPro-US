@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel", "setuptools_scm>=8.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mosnopro_us"
+dynamic = ["version"]
+authors = [
+    { name = "Daniel Hogan", email = "dlhogan@uw.edu" },
+    { name = "Sruangsaeng Chaikasetsin", email = "sruanc@uw.edu" },
+    { name = "Jane Dai", email = "jd74@uw.edu" },
+    { name = "Xinya Tang", email = "xinyat@uw.edu" },
+]
+description = "A Streamlit-based tool for visualizing snowpack properties using SUMMA outputs."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.0",
+    "pandas>=2.1",
+    "numpy>=1.25",
+    "matplotlib>=3.5",
+]
+
+include = [
+    "src/mosnopro_us/data/*"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/dlhogan97/MoSnoPro-US.git"
+Issues = "https://github.com/dlhogan97/MoSnoPro-US/issues"
+
+[tool.setuptools_scm]
