@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import xarray as xr
 import importlib.resources as pkg_resources
-from src.mosnopro_us import data
+import data
 import dropbox
 import io 
 import streamlit as st
@@ -29,6 +29,38 @@ def load_snow_depth_data(file_path):
 
 def summarize_snotel_points(gdf):
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
+
+def load_pandas_df_from_dropbox(dropbox_file_path):
+    """
+    Reads an csv file directly from Dropbox into memory.
+
+    Parameters:
+        dropbox_file_path (str): Path to the file in Dropbox (e.g., '/folder/file.nc').
+        access_token (str): Dropbox API access token.
+
+    Returns:
+        pandas.DataFrame: Loaded dataset.
+    """
+    token = st.secrets.db_credentials.refresh_token
+    app_key = st.secrets.db_credentials.APP_KEY
+    app_secret = st.secrets.db_credentials.APP_SECRET
+    try:
+        # Initialize Dropbox client
+        dbx = dropbox.Dropbox(app_key=app_key,
+                              app_secret=app_secret,
+                              oauth2_refresh_token=token)
+        
+        # Download the file content into memory
+        metadata, res = dbx.files_download(dropbox_file_path)
+        file_content = io.BytesIO(res.content)
+        
+        # Load the file content as an xarray dataset
+        df = pd.read_csv(file_content, index_col=0, parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_localize(None)
+        return df
+    except Exception as e:
+        raise RuntimeError(f"Failed to read file from Dropbox: {e}")
 
 def load_xarray_file_from_dropbox(dropbox_file_path):
     """
