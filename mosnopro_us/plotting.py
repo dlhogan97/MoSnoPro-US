@@ -223,11 +223,10 @@ def produce_temp_depth_fig(summa_df, snotel_df, name):
     plot_layers(temp, (depth), colormap=temp_cmap, plot_soil=False, plot_snow=True, cbar_kwargs={'label': 'Temperature (C)', 'ticks':np.arange(-10,1,1)}, variable_range=[-10, 1], ax=ax)
     (summa_df['scalarSnowDepth']).plot(color='k', linewidth=2, ax=ax, label='SUMMA Modeled Snow Depth');
     snow_depth_obs.plot(color='red', ls='--', linewidth=2, ax=ax, label='Observed Snow Depth');
-    ax.legend()
+    ax.legend(loc='upper left')
     ax.set_title(f"{name} Snow Depth\n{snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')} to {snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')}\nElevation: {snotel_df['geometry'].iloc[0][-5:-1]} ft")
     ax.set_ylabel('Snow Depth (m)')
     ax.set_xlabel('Date')
-    fig.show()
     return fig
 
 def produce_density_depth_fig(summa_df, snotel_df, name):
@@ -246,11 +245,10 @@ def produce_density_depth_fig(summa_df, snotel_df, name):
     plot_layers(density, (depth), colormap=density_cmap_r, plot_soil=False, plot_snow=True, cbar_kwargs={'label': 'Density (kg/m$^3$)', 'ticks':np.arange(100,400,30)}, variable_range=[100, 400], ax=ax)
     (summa_df['scalarSnowDepth']).plot(color='k', linewidth=2, ax=ax, label='SUMMA Modeled Snow Depth');
     snow_depth_obs.plot(color='red', ls='--', linewidth=2, ax=ax, label='Observed Snow Depth');
-    ax.legend()
+    ax.legend(loc='upper left')
     ax.set_title(f"{name} Snow Depth\n{snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')} to {snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')}\nElevation: {snotel_df['geometry'].iloc[0][-5:-1]} ft")
     ax.set_ylabel('Snow Depth (m)')
     ax.set_xlabel('Date')
-    fig.show()
     return fig
 
 def produce_liquid_water_depth_fig(summa_df, snotel_df, name):
@@ -259,7 +257,7 @@ def produce_liquid_water_depth_fig(summa_df, snotel_df, name):
     depth = summa_df.isel(hru=0)['iLayerHeight']
     # get density of each layer
     liq_water = summa_df.isel(hru=0)['mLayerVolFracLiq']*1000
-    liq_water = liq_water.where(density>=0, np.nan)
+    liq_water = liq_water.where(liq_water>=0, np.nan)
 
     # get observed snow depth
     snow_depth_obs = get_snotel_depth(snotel_df)
@@ -268,9 +266,8 @@ def produce_liquid_water_depth_fig(summa_df, snotel_df, name):
     plot_layers(liq_water, (depth), colormap=density_cmap_r, plot_soil=False, plot_snow=True, cbar_kwargs={'label': 'Liquid Water Content (kg/m$^3$)', 'ticks':np.arange(0,100,10)}, variable_range=[0, 100], ax=ax)
     (summa_df['scalarSnowDepth']).plot(color='k', linewidth=2, ax=ax, label='SUMMA Modeled Snow Depth');
     snow_depth_obs.plot(color='red', ls='--', linewidth=2, ax=ax, label='Observed Snow Depth');
-    ax.legend()
+    ax.legend(loc='upper left')
     ax.set_title(f"{name} Snow Depth\n{snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')} to {snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')}\nElevation: {snotel_df['geometry'].iloc[0][-5:-1]} ft")
     ax.set_ylabel('Snow Depth (m)')
     ax.set_xlabel('Date')
-    fig.show()
     return fig
