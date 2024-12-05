@@ -1,3 +1,17 @@
+## 12-03
+**Alerts for next week**
+- Presentations are 5 min, cover 5 main things:
+  1) Brief overview
+  2) Describe software from human-centered design (could incorporate as part of demo)
+  3) Discuss software/data used and why (could incorporate as part of demo)
+  4) Challenges
+  5) Next steps
+- Repo code must be finalized by 8a, Friday 12/13 (!)
+**Streamlit updates**
+- Plotting functions are working! 
+- To run natively, need some app-keys (Danny will provide via Slack)
+- Priorities are now to tinker/fine-tune app re: visualization and functionality, check that tests are comprehensive, doc strings are descriptive and clear, etc.
+
 ## 11-26
 **Organizing model output**
 - Danny is working on a script that could auto-update figures, most have been updated in the /src/figures folder. Good that the model is performing relatively well (with the exception of Stevens Pass)!
