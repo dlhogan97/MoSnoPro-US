@@ -9,6 +9,10 @@ import streamlit as st
 
 
 def load_geojson(file_name):
+    """
+    Reads GeoJSON file to create basic WA state geography map.
+    Alerts user if this base geography layer was unable to load (error).
+    """
     try:
         with pkg_resources.files(data).joinpath(file_name).open("r") as f:
             return gpd.read_file(f)
@@ -16,18 +20,29 @@ def load_geojson(file_name):
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
     
 def load_snotel_points():
+    """
+
+    """
     return load_geojson("WA_snotel_points.geojson")
 
 def load_washington_boundary():
+    """
+    """
     return load_geojson("washington.geojson")
 
 def load_snow_depth_data(file_path):
+    """
+    Loads snow depth data from Dropbox.
+    """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
     except Exception as e:
         raise ValueError(f"Error loading snow depth data : {e}")
 
 def summarize_snotel_points(gdf):
+    """
+    Extracts key "demographics" from Snotel sites.
+    """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
 def load_pandas_df_from_dropbox(dropbox_file_path):
