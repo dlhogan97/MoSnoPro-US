@@ -77,6 +77,10 @@ elif section == "Interactive Map":
             snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
             summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
+            # Recent week and recent month options
+
+            # User selection of map type
+
             # Plot Temperature for the selected site
             fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
 
