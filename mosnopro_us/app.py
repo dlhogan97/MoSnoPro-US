@@ -5,60 +5,84 @@ import folium
 import plotting
 import map_builder
 
+# Set page config
 st.set_page_config(
-    page_title="MoSnoProUS documentation",
-    page_icon=":world_map:️",
+    page_title="MoSnoPro-US Dashboard",
+    page_icon="🏔️",
     layout="wide",
 )
 
-"# MoSnoPro-US"
+# Header section
+st.title("MoSnoPro-US Dashboard 🏔️❄️")
+st.markdown(
+    """
+    Welcome to **MoSnoPro-US**, a tool designed for visualizing and analyzing snowpack properties across Washington State.  
+    Using real-time data from SNOTEL stations and the SUMMA model, this app provides insights into snow depth, density, and temperature trends, helping users understand snowpack instabilities and potential avalanche risks.
+    """
+)
 
-"""Need to fill this in"""
+# Sidebar Navigation
+st.sidebar.title("Navigation")
+section = st.sidebar.radio("Go to", ["Overview", "Interactive Map"])
 
-"""
-Currently, 
-"""
+# Overview Section
+if section == "Overview":
+    st.markdown("## Overview")
+    st.markdown(
+        """
+        ### Key Features  
+        - **Interactive Maps**: Explore snowpack metrics at various SNOTEL stations.  
+        - **Visualizations**: View snow depth, temperature, and density trends over time.  
+        - **Real-Time Data**: Integrates SNOTEL and weather forecast data for actionable insights.  
+        
+        ### How to Use  
+        1. Select a SNOTEL site from the interactive map.  
+        2. View detailed snowpack metrics and visualizations.  
+        3. Use the dashboard to explore trends and generate insights.  
+        """
+    )
 
-"""
+# Ineractive Map and Visualization
+elif section == "Interactive Map":
+    st.markdown("## Interactive Map")
+    st.markdown("Click on a Snotel site to produce a figure of Snow Depth and Temperature.")
+    left, right = st.columns(2)
 
+    with left:
+        st.markdown("### Map")
+        m = map_builder.plot_map()
 
-### Click on site to produce figure.
-"""
-left, right = st.columns(2)
+        # save points clicked to variable
+        # call to render Folium map in Streamlit
+        st_data = st_folium(m, 
+                            returned_objects= ['last_active_drawing','last_object_clicked_popup'],
+                            width=725, height=600)
 
-with left:
-    m = map_builder.plot_map()
+    with right:
 
-    # save points clicked to variable
-    # call to render Folium map in Streamlit
-    st_data = st_folium(m, 
-                        returned_objects= ['last_active_drawing','last_object_clicked_popup'],
-                        width=725, height=300)
+        if st_data['last_active_drawing'] is None:
+            st.write("No Snotel site clicked")
+        elif not 'properties' in st_data['last_active_drawing'].keys():
+            st.write("No Snotel site clicked")
+        elif st_data['last_active_drawing']['properties'] == {}:
+            st.write("No Snotel site clicked")
+        else:
+            site = st_data['last_active_drawing']["properties"]["name"]
+            st.write(f"Producing figure for {site}... Please wait...")
+            site = str.replace(site, " ", "_")
 
-with right:
-    if st_data['last_active_drawing'] is None:
-        st.write("No Snotel site clicked")
-    elif not 'properties' in st_data['last_active_drawing'].keys():
-        st.write("No Snotel site clicked")
-    elif st_data['last_active_drawing']['properties'] == {}:
-        st.write("No Snotel site clicked")
-    else:
-        site = st_data['last_active_drawing']["properties"]["name"]
-        st.write(f"Producing figure for {site}... Please wait...")
-        site = str.replace(site, " ", "_")
+            st.write(f"Loading data for {site}...")
+            db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
+            db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
+            snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
+            summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
-        st.write(f"Loading data for {site}...")
-        db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
-        db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
-        snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
-        summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
+            # Plot Temperature for the selected site
+            fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
 
-        # Plot Temperature for the selected site
-        fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
+            # Display the figure
+            st.pyplot(fig)
 
-        # Display the figure
-        st.pyplot(fig)
-
-        # reset for the next user click
+            # reset for the next user click
 
 
