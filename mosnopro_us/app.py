@@ -42,7 +42,7 @@ if section == "Overview":
         """
     )
 
-# Ineractive Map and Visualization
+# Interactive Map and Visualization
 elif section == "Interactive Map":
     st.markdown("## Interactive Map")
     st.markdown("Click on a Snotel site to produce a figure of Snow Depth and Temperature.")
@@ -68,14 +68,19 @@ elif section == "Interactive Map":
             st.write("No Snotel site clicked")
         else:
             site = st_data['last_active_drawing']["properties"]["name"]
+            # Add text to indicate the type of figure (snow depth vs. temp)? 
             st.write(f"Producing figure for {site}... Please wait...")
             site = str.replace(site, " ", "_")
+
+                # Remove text after figure is completed? 
 
             st.write(f"Loading data for {site}...")
             db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
             db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
             snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
             summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
+
+                # Remove "Loading data for {site}" after file is loaded?
 
             # Plot Temperature for the selected site
             fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
