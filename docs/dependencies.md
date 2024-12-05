@@ -6,3 +6,4 @@ xarray
 pandas
 numpy
 dropbox
+geopandas
