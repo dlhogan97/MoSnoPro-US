@@ -2,18 +2,36 @@ import geopandas as gpd
 import pandas as pd
 import xarray as xr
 import importlib.resources as pkg_resources
-import data
 import dropbox
 import io
 import streamlit as st
+import os
 
 
 def load_geojson(file_name):
+    """
+    Dynamically load a GeoJSON file from the `data` directory.
+
+    Parameters:
+    - file_name (str): Name of the GeoJSON file to load.
+
+    Returns:
+    - GeoDataFrame: A GeoPandas DataFrame containing the data from the GeoJSON file.
+
+    Raises:
+    - ValueError: If the file cannot be loaded or doesn't exist.
+    """
     try:
-        with pkg_resources.files(data).joinpath(file_name).open("r") as f:
-            return gpd.read_file(f)
+        # Dynamically construct the file path relative to this script's location
+        base_dir = os.path.dirname(__file__)  # Directory of the current script
+        data_dir = os.path.join(base_dir, "data")  # Subdirectory containing data files
+        file_path = os.path.join(data_dir, file_name)
+
+        # Load the GeoJSON file using GeoPandas
+        return gpd.read_file(file_path)
     except Exception as e:
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
+
 
 
 def load_snotel_points():
