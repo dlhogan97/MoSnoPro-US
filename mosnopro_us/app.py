@@ -16,8 +16,12 @@ st.set_page_config(
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
 st.markdown(
     """
-    Welcome to **MoSnoPro-US**, a tool designed for visualizing and analyzing snowpack properties across Washington State.  
-    Using real-time data from SNOTEL stations and the SUMMA model, this app provides insights into snow depth, density, and temperature trends, helping users understand snowpack instabilities and potential avalanche risks.
+    Welcome to **MoSnoPro-US**, a tool designed for visualizing
+    and analyzing snowpack properties across Washington State.
+    Using real-time data from SNOTEL stations and the SUMMA model,
+    this app provides insights into snow depth, density,
+    and temperature trends, helping users understand
+    snowpack instabilities and potential avalanche risks.
     """
 )
 
@@ -30,15 +34,18 @@ if section == "Overview":
     st.markdown("## Overview")
     st.markdown(
         """
-        ### Key Features  
-        - **Interactive Maps**: Explore snowpack metrics at various SNOTEL stations.  
-        - **Visualizations**: View snow depth, temperature, and density trends over time.  
-        - **Real-Time Data**: Integrates SNOTEL and weather forecast data for actionable insights.  
-        
-        ### How to Use  
-        1. Select a SNOTEL site from the interactive map.  
-        2. View detailed snowpack metrics and visualizations.  
-        3. Use the dashboard to explore trends and generate insights.  
+        ### Key Features
+        - **Interactive Maps**:
+        Explore snowpack metrics at various SNOTEL stations.
+        - **Visualizations**:
+        View snow depth, temperature, and density trends over time.
+        - **Real-Time Data**:
+        Integrates SNOTEL and weather forecast data for actionable insights.
+
+        ### How to Use
+        1. Select a SNOTEL site from the interactive map.
+        2. View detailed snowpack metrics and visualizations.
+        3. Use the dashboard to explore trends and generate insights.
         """
     )
 
@@ -54,15 +61,16 @@ elif section == "Interactive Map":
 
         # save points clicked to variable
         # call to render Folium map in Streamlit
-        st_data = st_folium(m, 
-                            returned_objects= ['last_active_drawing','last_object_clicked_popup'],
+        st_data = st_folium(m,
+                            returned_objects=['last_active_drawing',
+                                              'last_object_clicked_popup'],
                             width=725, height=600)
 
     with right:
 
         if st_data['last_active_drawing'] is None:
             st.write("No Snotel site clicked")
-        elif not 'properties' in st_data['last_active_drawing'].keys():
+        elif 'properties' not in st_data['last_active_drawing'].keys():
             st.write("No Snotel site clicked")
         elif st_data['last_active_drawing']['properties'] == {}:
             st.write("No Snotel site clicked")
@@ -72,8 +80,10 @@ elif section == "Interactive Map":
             site = str.replace(site, " ", "_")
 
             st.write(f"Loading data for {site}...")
-            db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
-            db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
+            # Path to the xarray file in Dropbox
+            db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"
+            # Path to csv in Dropbox
+            db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv"
             snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
             summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
@@ -88,5 +98,3 @@ elif section == "Interactive Map":
             st.pyplot(fig)
 
             # reset for the next user click
-
-
