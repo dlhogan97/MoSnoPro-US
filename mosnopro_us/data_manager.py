@@ -20,6 +20,7 @@ def load_geojson(file_name):
 
     Raises:
     - ValueError: If the file cannot be loaded or doesn't exist.
+
     """
     try:
         # Dynamically construct the file path relative to this script's location
@@ -35,14 +36,22 @@ def load_geojson(file_name):
 
 
 def load_snotel_points():
+    """
+
+    """
     return load_geojson("WA_snotel_points.geojson")
 
 
 def load_washington_boundary():
+    """
+    """
     return load_geojson("washington.geojson")
 
 
 def load_snow_depth_data(file_path):
+    """
+    Loads snow depth data from Dropbox.
+    """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
     except Exception as e:
@@ -50,6 +59,9 @@ def load_snow_depth_data(file_path):
 
 
 def summarize_snotel_points(gdf):
+    """
+    Extracts key "demographics" from Snotel sites.
+    """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
 
