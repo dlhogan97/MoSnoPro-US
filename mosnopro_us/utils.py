@@ -1,6 +1,7 @@
 # Code adapted from https://github.com/UW-Hydro/pysumma/blob/master/pysumma/plotting/utils.py
 import numpy as np
 
+
 def justify(a, invalid_val=np.nan, axis=1, side='right'):
     """
     Justifies a 2D array
@@ -20,12 +21,12 @@ def justify(a, invalid_val=np.nan, axis=1, side='right'):
     if invalid_val is np.nan:
         mask = ~np.isnan(a)
     else:
-        mask = a!=invalid_val
-    justified_mask = np.sort(mask,axis=axis)
-    if (side=='up') | (side=='left'):
-        justified_mask = np.flip(justified_mask,axis=axis)
+        mask = a != invalid_val
+    justified_mask = np.sort(mask, axis=axis)
+    if (side == 'up') | (side == 'left'):
+        justified_mask = np.flip(justified_mask, axis=axis)
     out = np.full(a.shape, invalid_val)
-    if axis==1:
+    if axis == 1:
         out[justified_mask] = a[mask]
     else:
         out.T[justified_mask.T] = a.T[mask.T]
