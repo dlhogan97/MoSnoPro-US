@@ -2,29 +2,56 @@ import geopandas as gpd
 import pandas as pd
 import xarray as xr
 import importlib.resources as pkg_resources
-import data
 import dropbox
 import io
 import streamlit as st
+import os
 
 
 def load_geojson(file_name):
+    """
+    Dynamically load a GeoJSON file from the `data` directory.
+
+    Parameters:
+    - file_name (str): Name of the GeoJSON file to load.
+
+    Returns:
+    - GeoDataFrame: A GeoPandas DataFrame containing the data from the GeoJSON file.
+
+    Raises:
+    - ValueError: If the file cannot be loaded or doesn't exist.
+
+    """
     try:
-        with pkg_resources.files(data).joinpath(file_name).open("r") as f:
-            return gpd.read_file(f)
+        # Dynamically construct the file path relative to this script's location
+        base_dir = os.path.dirname(__file__)  # Directory of the current script
+        data_dir = os.path.join(base_dir, "data")  # Subdirectory containing data files
+        file_path = os.path.join(data_dir, file_name)
+
+        # Load the GeoJSON file using GeoPandas
+        return gpd.read_file(file_path)
     except Exception as e:
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
 
 
+
 def load_snotel_points():
+    """
+
+    """
     return load_geojson("WA_snotel_points.geojson")
 
 
 def load_washington_boundary():
+    """
+    """
     return load_geojson("washington.geojson")
 
 
 def load_snow_depth_data(file_path):
+    """
+    Loads snow depth data from Dropbox.
+    """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
     except Exception as e:
@@ -32,6 +59,9 @@ def load_snow_depth_data(file_path):
 
 
 def summarize_snotel_points(gdf):
+    """
+    Extracts key "demographics" from Snotel sites.
+    """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
 

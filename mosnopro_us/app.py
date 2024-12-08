@@ -63,7 +63,7 @@ if section == "Overview":
         """
     )
 
-# Ineractive Map and Visualization
+# Interactive Map and Visualization
 elif section == "Interactive Map":
     st.markdown("## Interactive Map")
     st.markdown("Click on a Snotel site to produce a figure of Snow Depth versus Temperature or Density.")
@@ -90,8 +90,11 @@ elif section == "Interactive Map":
             st.write("No Snotel site clicked")
         else:
             site = st_data['last_active_drawing']["properties"]["name"]
+            # Add text to indicate the type of figure (snow depth vs. temp)? 
             st.write(f"Producing figure for {site}... Please wait...")
             site = str.replace(site, " ", "_")
+
+                # Remove text after figure is completed? 
 
             st.write(f"Loading data for {site}...")
             # Path to the xarray file in Dropbox
@@ -101,6 +104,7 @@ elif section == "Interactive Map":
             snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
             summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
+<<<<<<< HEAD
             # Time Range Selection
             st.markdown("### Time Range")
             time_range = st.radio("Select Time Range:", ["Defaut", "Recent Week", "Recent Month"])
@@ -114,6 +118,11 @@ elif section == "Interactive Map":
             # Filter data by selected time range
             filtered_summa_data = summa_ds.sel(time=time_slice)
             filtered_snotel_data = snotel_df.loc[time_slice]
+=======
+            # Remove "Loading data for {site}" after file is loaded?
+
+            # Recent week and recent month options
+>>>>>>> refs/remotes/origin/main
 
             # User selection of Map type
             plot_type = st.radio("Select Plot Type:", ["Temperature", "Density"])
