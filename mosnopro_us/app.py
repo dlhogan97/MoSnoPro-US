@@ -4,6 +4,7 @@ from streamlit_folium import st_folium
 import folium
 import plotting
 import map_builder
+import pandas as pd
 
 # Set page config
 st.set_page_config(
@@ -23,6 +24,19 @@ st.markdown(
     and temperature trends, helping users understand
     snowpack instabilities and potential avalanche risks.
     """
+)
+
+# Add custom CSS to reduce sidebar width
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {
+        min-width: 200px;  /* Adjust this value to fit the text */
+        max-width: 200px;  /* Ensure the sidebar doesn't expand */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 # Sidebar Navigation
@@ -52,7 +66,7 @@ if section == "Overview":
 # Ineractive Map and Visualization
 elif section == "Interactive Map":
     st.markdown("## Interactive Map")
-    st.markdown("Click on a Snotel site to produce a figure of Snow Depth and Temperature.")
+    st.markdown("Click on a Snotel site to produce a figure of Snow Depth versus Temperature or Density.")
     left, right = st.columns(2)
 
     with left:
@@ -87,14 +101,34 @@ elif section == "Interactive Map":
             snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
             summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
-            # Recent week and recent month options
+            # Time Range Selection
+            st.markdown("### Time Range")
+            time_range = st.radio("Select Time Range:", ["Defaut", "Recent Week", "Recent Month"])
+            if time_range == "Defaut":
+                time_slice = slice(None)
+            elif time_range == "Recent Week":
+                time_slice = slice(pd.Timestamp.now() - pd.Timedelta(weeks=1), pd.Timestamp.now())
+            elif time_range == "Recent Month":
+                time_slice = slice(pd.Timestamp.now() - pd.Timedelta(days=30), pd.Timestamp.now())
+            
+            # Filter data by selected time range
+            filtered_summa_data = summa_ds.sel(time=time_slice)
+            filtered_snotel_data = snotel_df.loc[time_slice]
 
-            # User selection of map type
+            # User selection of Map type
+            plot_type = st.radio("Select Plot Type:", ["Temperature", "Density"])
+            if plot_type == "Temperature":
+                # Plot Snow Depth for the selected site
+                fig = plotting.produce_temp_depth_fig(filtered_summa_data, filtered_snotel_data, site)
+            elif plot_type == "Density":
+                # Plot Density for the selected site
+                fig = plotting.produce_density_depth_fig(filtered_summa_data, filtered_snotel_data, site)
 
             # Plot Temperature for the selected site
-            fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
+            #fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
 
             # Display the figure
             st.pyplot(fig)
 
+           
             # reset for the next user click
