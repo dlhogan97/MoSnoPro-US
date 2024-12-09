@@ -1,8 +1,6 @@
 import folium
-from mosnopro_us import data_manager
+from mosnopro_us.data_manager import load_snotel_points, load_washington_boundary
 from pyproj import Transformer
-
-
 
 def plot_map():
     """
@@ -11,14 +9,14 @@ def plot_map():
     - folium.Map: A folium map object with added layers.
     """
     # Load SNOTEL points and filter for specific sites
-    snotels = data_manager.load_snotel_points()
+    snotels = load_snotel_points()
     sites = ['Morse Lake', 'Olallie Meadows', 'Paradise',
              'Stampede Pass', 'Stevens Pass', 'Swift Creek',
              'Waterhole', 'Wells Creek', 'White Pass']
     snotels = snotels[snotels['name'].isin(sites)]
     snotels['alt'] = (snotels['geometry'].z / 3.28).astype(int).astype(str) + ' M'
     # Load Washington boundary
-    wa_state = data_manager.load_washington_boundary()
+    wa_state = load_washington_boundary()
     # plot these points on a folium map
     transformer = Transformer.from_crs("EPSG:32638", "EPSG:4326", always_xy=True)
 

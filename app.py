@@ -6,7 +6,9 @@ import logging
 import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium
-from mosnopro_us import data_manager, plotting, map_builder
+import mosnopro_us.data_manager as data_manager
+import mosnopro_us.plotting as plotting
+import mosnopro_us.map_builder as map_builder
 
 # Configure logging
 logging.basicConfig(
