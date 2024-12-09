@@ -1,5 +1,5 @@
 import folium
-from mosnopro_us import data_manager
+import data_manager
 
 
 def plot_map():
