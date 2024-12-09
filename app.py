@@ -23,10 +23,15 @@ st.set_page_config(
     page_icon="🏔️",
     layout="wide",
 )
-
-# Constants
-SNOTEL_PATH = "/Apps/push-and-pull-pysumma/snotel_csvs/"
-SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
+# if a .streamlit/secrets file exists, then we'll pull data from there
+# otherwise, we'll use the example data
+if st.secrets:
+    # Constants
+    SNOTEL_PATH = "/Apps/push-and-pull-pysumma/snotel_csvs/"
+    SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
+else:
+    print("Secrets file not found. Using example data instead.")
+    SNOTEL_PATH = "./data/example_data/"
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
