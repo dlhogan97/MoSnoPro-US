@@ -25,7 +25,7 @@ def load_geojson(file_name):
     try:
         # Dynamically construct the file path relative to this script's location
         base_dir = os.path.dirname(__file__)  # Directory of the current script
-        data_dir = os.path.join(base_dir, "data")  # Subdirectory containing data files
+        data_dir = os.path.join(base_dir, "../data")  # Subdirectory containing data files
         file_path = os.path.join(data_dir, file_name)
 
         # Load the GeoJSON file using GeoPandas

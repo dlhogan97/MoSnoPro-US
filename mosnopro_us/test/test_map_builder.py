@@ -1,19 +1,17 @@
 import pytest
 import folium
-from mosnopro_us.map_builder import plot_map
-from mosnopro_us.data_manager import load_snotel_points
-
+from .context import mosnopro_us
 
 @pytest.fixture
 def map_object():
     """Fixture to generate the map object."""
-    return plot_map()
+    return mosnopro_us.map_builder.plot_map()
 
 
 @pytest.fixture
 def snotel_data():
     """Fixture to load snotel points."""
-    return load_snotel_points()
+    return mosnopro_us.data_manager.load_snotel_points()
 
 
 def test_map_has_correct_sites(map_object):

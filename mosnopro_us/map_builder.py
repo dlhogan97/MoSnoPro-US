@@ -1,5 +1,7 @@
 import folium
-import data_manager
+from mosnopro_us import data_manager
+from pyproj import Transformer
+
 
 
 def plot_map():
@@ -18,7 +20,12 @@ def plot_map():
     # Load Washington boundary
     wa_state = data_manager.load_washington_boundary()
     # plot these points on a folium map
-    m = folium.Map([wa_state.centroid.y.loc[0], wa_state.centroid.x.loc[0]],
+    transformer = Transformer.from_crs("EPSG:32638", "EPSG:4326", always_xy=True)
+
+    x, y = [wa_state.to_crs(32638).centroid.x.mean(), wa_state.to_crs(32638).centroid.y.mean()]
+
+    lon, lat = transformer.transform(x, y)
+    m = folium.Map(location=[lat, lon],
                    zoom_start=7, tiles="openstreetmap")
     # Add Washington boundary to the map
     folium.GeoJson(
