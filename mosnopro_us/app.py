@@ -1,10 +1,23 @@
+"""
+This is the main application file for MoSnoPro-US Dashboard.
+It provides an interactive interface for visualizing snowpack properties.
+"""
+
+import logging
 import streamlit as st
-import data_manager
+import pandas as pd
 from streamlit_folium import st_folium
-import folium
+import data_manager
 import plotting
 import map_builder
-import pandas as pd
+
+
+# Configure logging
+logging.basicConfig(
+    filename="mosnopro_us.log",
+    level=logging.ERROR,
+    format="%(asctime)s %(levelname)s%(message)s"
+)
 
 # Set page config
 st.set_page_config(
@@ -12,6 +25,10 @@ st.set_page_config(
     page_icon="🏔️",
     layout="wide",
 )
+
+# Constants
+SNOTEL_PATH = "/Apps/push-and-pull-pysumma/snotel_csvs/"
+SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
@@ -31,8 +48,8 @@ st.markdown(
     """
     <style>
     [data-testid="stSidebar"] {
-        min-width: 200px;  /* Adjust this value to fit the text */
-        max-width: 200px;  /* Ensure the sidebar doesn't expand */
+        min-width: 200px;  
+        max-width: 200px;  
     }
     </style>
     """,
@@ -42,6 +59,51 @@ st.markdown(
 # Sidebar Navigation
 st.sidebar.title("Navigation")
 section = st.sidebar.radio("Go to", ["Overview", "Interactive Map"])
+
+# Helper Functions
+def load_and_filter_data(site, time_slice):
+    """
+    Load and filter data for the selected SNOTEL site.
+    Args:
+        site (str): The name of the SNOTEL site.
+        time_range (str): The selected time range.
+    Returns:
+        tuple: Filtered SUMMA and SNOTEL data.
+    """
+     # Path to the xarray file in Dropbox
+    db_xr_file = f"{SUMMA_PATH}_{site}_timestep.nc"
+    # Path to csv in Dropbox
+    db_pd_file = f"{SNOTEL_PATH}{site}.csv"
+
+    snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
+    summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
+
+    filtered_summa_data = summa_ds.sel(time=time_slice)
+    filtered_snotel_data = snotel_df.loc[time_slice]
+
+    return filtered_summa_data, filtered_snotel_data
+
+def plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, plot_type):
+    """
+    Plot the selected figure based on user input.
+    Args:
+        filtered_summa_data (xr.Dataset): Filtered SUMMA data.
+        filtered_snotel_data (pd.DataFrame): Filtered SNOTEL data.
+        site (str): The name of the SNOTEL site.
+        plot_type (str): The selected plot type (Temperature or Density).
+    Returns:
+        matplotlib.figure.Figure: The generated figure.
+    Raises:
+        ValueError: If the plot type is invalid.
+    """
+    if plot_type == "Temperature":
+        # Plot Snow Depth for the selected site
+        return plotting.produce_temp_depth_fig(filtered_summa_data, filtered_snotel_data, site)
+    if plot_type == "Density":
+        # Plot Density for the selected site
+        return plotting.produce_density_depth_fig(filtered_summa_data, filtered_snotel_data, site)
+
+    raise ValueError(f"Invalid plot type: {plot_type}. Choose from 'Temperature' or 'Density'.")
 
 # Overview Section
 if section == "Overview":
@@ -66,7 +128,8 @@ if section == "Overview":
 # Interactive Map and Visualization
 elif section == "Interactive Map":
     st.markdown("## Interactive Map")
-    st.markdown("Click on a Snotel site to produce a figure of Snow Depth versus Temperature or Density.")
+    st.markdown(
+        "Click on a Snotel site to produce a figure of Snow Depth versus Temperature or Density.")
     left, right = st.columns(2)
 
     with left:
@@ -75,12 +138,14 @@ elif section == "Interactive Map":
 
         # save points clicked to variable
         # call to render Folium map in Streamlit
-        st_data = st_folium(m,
-                            returned_objects=['last_active_drawing',
-                                              'last_object_clicked_popup'],
-                            width=725, height=600)
+        st_data = st_folium(
+            m,
+            returned_objects=['last_active_drawing', 'last_object_clicked_popup'],
+            width=725, height=600
+        )
 
     with right:
+        placeholder_message = st.empty()    # Placeholder for temporary messages
 
         if st_data['last_active_drawing'] is None:
             st.write("No Snotel site clicked")
@@ -89,46 +154,52 @@ elif section == "Interactive Map":
         elif st_data['last_active_drawing']['properties'] == {}:
             st.write("No Snotel site clicked")
         else:
-            site = st_data['last_active_drawing']["properties"]["name"]
-            st.write(f"Producing figure for {site}... Please wait...")
-            site = str.replace(site, " ", "_")
+            try:
+                site = st_data['last_active_drawing']["properties"]["name"]
+                site = str.replace(site, " ", "_")
 
-            st.write(f"Loading data for {site}...")
-            # Path to the xarray file in Dropbox
-            db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"
-            # Path to csv in Dropbox
-            db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv"
-            snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
-            summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
+                placeholder_message.write(
+                    f"Producing figure for {site}... Please wait..."
+                )
 
-            # Time Range Selection
-            st.markdown("### Time Range")
-            time_range = st.radio("Select Time Range:", ["Defaut", "Recent Week", "Recent Month"])
-            if time_range == "Defaut":
-                time_slice = slice(None)
-            elif time_range == "Recent Week":
-                time_slice = slice(pd.Timestamp.now() - pd.Timedelta(weeks=1), pd.Timestamp.now())
-            elif time_range == "Recent Month":
-                time_slice = slice(pd.Timestamp.now() - pd.Timedelta(days=30), pd.Timestamp.now())
-            
-            # Filter data by selected time range
-            filtered_summa_data = summa_ds.sel(time=time_slice)
-            filtered_snotel_data = snotel_df.loc[time_slice]
+                # Time Range Selection
+                st.markdown("### Time Range")
+                time_range = st.radio(
+                    "Select Time Range:", ["Default", "Recent Week", "Recent Month"]
+                )
+                if time_range == "Default":
+                    time_slice = slice(None)
+                elif time_range == "Recent Week":
+                    time_slice = slice(
+                        pd.Timestamp.now() - pd.Timedelta(weeks=1), pd.Timestamp.now()
+                    )
+                elif time_range == "Recent Month":
+                    time_slice = slice(
+                        pd.Timestamp.now() - pd.Timedelta(days=30), pd.Timestamp.now()
+                    )
 
-            # User selection of Map type
-            plot_type = st.radio("Select Plot Type:", ["Temperature", "Density"])
-            if plot_type == "Temperature":
-                # Plot Snow Depth for the selected site
-                fig = plotting.produce_temp_depth_fig(filtered_summa_data, filtered_snotel_data, site)
-            elif plot_type == "Density":
-                # Plot Density for the selected site
-                fig = plotting.produce_density_depth_fig(filtered_summa_data, filtered_snotel_data, site)
+                # Filter data by selected time range
+                filtered_summa_data, filtered_snotel_data = load_and_filter_data(site, time_slice)
 
-            # Plot Temperature for the selected site
-            #fig = plotting.produce_temp_depth_fig(summa_ds, snotel_df, site)
+                # User selection of Map type
+                plot_type = st.radio("Select Plot Type:", ["Temperature", "Density"])
+                fig = plot_selected_figure(
+                    filtered_summa_data, filtered_snotel_data, site, plot_type
+                )
 
-            # Display the figure
-            st.pyplot(fig)
-            # Clear temporary messages
-            st.write("Figure completed.")
-            # reset for the next user click
+                # Display the figure
+                st.pyplot(fig)
+
+                # Clear temporary messages
+                placeholder_message.empty()
+                st.write("Figure completed.")
+
+            except KeyError as e:
+                placeholder_message.error(f"Missing key in data for {site}: {e}")
+            except FileNotFoundError as e:
+                placeholder_message.error(f"File not found for {site}: {e}")
+            except ValueError as e:
+                placeholder_message.error(f"Error processing data for {site}: {e}")
+            except Exception as e:
+                placeholder_message.error(f"Error loading or processing data for {site}: {e}")
+                logging.error("Error loading or processing data fro %s: %s", site, e)
