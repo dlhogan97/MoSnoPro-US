@@ -1,6 +1,7 @@
 # Adapted from https://github.com/UW-Hydro/pysumma/blob/master/pysumma/plotting/layers.py
 
 import numpy as np
+import xarray as xr
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -52,68 +53,69 @@ def plot_layers(var, depth, ax=None, colormap='viridis', plot_soil=True,
         Keyword arguments to draw the colorbar.
         They are passed directly to plt.colorbar.
     """
-    # Preprocess the data
-    vmask = var != -9999
-    dmask = depth != -9999
-    depth.values = justify(depth.where(dmask).values)
-    var.values = justify(var.where(vmask).values)
-    lo_depth = depth.where(depth > 0).T
-    hi_depth = depth.where(depth < 0).T
-    if plot_soil and not plot_snow:
-        var = var.where((depth > 0).values[:, :-1]).T
-    elif plot_snow and not plot_soil:
-        var = var.where((depth < 0).values[:, :-1]).T
+    if not (isinstance(var, xr.DataArray)) or not (isinstance(depth, xr.DataArray)):
+        raise AssertionError('var must be an xarray DataArray')
     else:
-        var = var.T
-    time = depth.time.values
+        # Preprocess the data
+        vmask = var != -9999
+        dmask = depth != -9999
+        depth.values = justify(depth.where(dmask).values)
+        var.values = justify(var.where(vmask).values)
+        lo_depth = depth.where(depth > 0).T
+        hi_depth = depth.where(depth < 0).T
+        if plot_soil and not plot_snow:
+            var = var.where((depth > 0).values[:, :-1]).T
+        elif plot_snow and not plot_soil:
+            var = var.where((depth < 0).values[:, :-1]).T
+        else:
+            var = var.T
+        time = depth.time.values
 
-    # Map colors to full range of data
-    if variable_range is not None:
-        assert len(variable_range) == 2, 'variable_range must have 2 values!'
-        norm = plt.Normalize(variable_range[0], variable_range[1])
-    else:
-        norm = plt.Normalize(np.nanmin(var), np.nanmax(var))
-    cmap = mpl.cm.get_cmap(colormap)
-    rgba = cmap(norm(var))
+        # Map colors to full range of data
+        if variable_range is not None:
+            assert len(variable_range) == 2, 'variable_range must have 2 values!'
+            norm = plt.Normalize(variable_range[0], variable_range[1])
+        else:
+            norm = plt.Normalize(np.nanmin(var), np.nanmax(var))
+        cmap = mpl.colormaps.get_cmap(colormap)
+        rgba = cmap(norm(var))
 
-    # Create axes if needed
-    if not ax:
-        fig, ax = plt.subplots(figsize=(18, 8))
+        # Create axes if needed
+        if not ax:
+            fig, ax = plt.subplots(figsize=(18, 8))
 
-    # Plot soil layers - need to reverse because we plot bottom down
-    if plot_soil:
-        for llo in lo_depth.ifcToto.values[:-1][::-1]:
-            y = lo_depth[llo]
-            y[np.isnan(y)] = 0
-            ax.vlines(time, ymin=-y, ymax=0, color=rgba[llo], **line_kwargs)
+        # Plot soil layers - need to reverse because we plot bottom down
+        if plot_soil:
+            for llo in lo_depth.ifcToto.values[:-1][::-1]:
+                y = lo_depth[llo]
+                y[np.isnan(y)] = 0
+                ax.vlines(time, ymin=-y, ymax=0, color=rgba[llo], **line_kwargs)
 
-    # Plot snow layers - plot top down
-    if plot_snow:
-        for lhi in hi_depth.ifcToto.values[:-1]:
-            y = hi_depth[lhi]
-            y[np.isnan(y)] = 0
-            if (y != 0).any():
-                ax.vlines(time, ymin=0, ymax=-y,
-                          color=rgba[lhi], **line_kwargs)
+        # Plot snow layers - plot top down
+        if plot_snow:
+            for lhi in hi_depth.ifcToto.values[:-1]:
+                y = hi_depth[lhi]
+                y[np.isnan(y)] = 0
+                if (y != 0).any():
+                    ax.vlines(time, ymin=0, ymax=-y,
+                            color=rgba[lhi], **line_kwargs)
 
-    # Add the colorbar
-    mappable = cm.ScalarMappable(norm=norm, cmap=cmap)
-    mappable.set_array(var.values.flatten())
-    try:
-        label = var.long_name
-    except Exception:
-        label = var.name
-    if 'label' not in cbar_kwargs.keys():
-        cbar_kwargs['label'] = label
-    if 'ax' not in cbar_kwargs.keys():
-        cbar_kwargs['ax'] = ax
-    if add_colorbar:
-        plt.gcf().colorbar(mappable, **cbar_kwargs)
-    return ax, mappable
+        # Add the colorbar
+        mappable = cm.ScalarMappable(norm=norm, cmap=cmap)
+        mappable.set_array(var.values.flatten())
+        try:
+            label = var.long_name
+        except Exception:
+            label = var.name
+        if 'label' not in cbar_kwargs.keys():
+            cbar_kwargs['label'] = label
+        if 'ax' not in cbar_kwargs.keys():
+            cbar_kwargs['ax'] = ax
+        if add_colorbar:
+            plt.gcf().colorbar(mappable, **cbar_kwargs)
+        return ax, mappable
 
-
-# Create colomaps
-
+##### Create colormaps
 # The range of temperature bins in Fahrenheit
 a = np.arange(-20, 5, 1)
 
@@ -200,7 +202,7 @@ density_cmap = colors.LinearSegmentedColormap.from_list("density", COLORS)
 density_cmap_r = colors.LinearSegmentedColormap.from_list(
     "density_r", COLORS_r)
 
-def produce_temp_depth_fig(summa_df, snotel_df, name):
+def produce_temp_depth_fig(summa_df, snotel_df, name, plot_snow=True):
     """
     Processes temperature and depth layers from SUMMA and displays a SNOTEL site-specific figure.
 
@@ -212,127 +214,152 @@ def produce_temp_depth_fig(summa_df, snotel_df, name):
     Returns:
     - Figure of temperature of each snow layer
     """
-    # get temperature and depth layers
-    # get depth of each layer
-    depth = summa_df.isel(hru=0)['iLayerHeight']
-    # get temperature of each layer
-    temp = summa_df.isel(hru=0)['mLayerTemp']
-    # convert to Celsius
-    temp = temp.where(temp < -100, temp-273.15)
+    # check that hru, time, and ifcToto are present
+    if not all(val in list(summa_df.dims) for val in ['time', 'ifcToto', 'hru']):
+        raise ValueError('DataArray is missing dimension. Check for hru, time, and ifcToto.')
+    else:
+        # get temperature and depth layers
+        # get depth of each layer
+        depth = summa_df.isel(hru=0)['iLayerHeight']
+        # get temperature of each layer
+        temp = summa_df.isel(hru=0)['mLayerTemp']
+        # convert to Celsius
+        temp = temp.where(temp < -100, temp-273.15)
 
-    min_time = pd.to_datetime(depth.time.values.min())
-    # get observed snow depth
-    snow_depth_obs = get_snotel_depth(snotel_df, min_time)
+        min_time = pd.to_datetime(depth.time.values.min())
+        # get observed snow depth
+        snow_depth_obs = get_snotel_depth(snotel_df, min_time)
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    plot_layers(temp, (depth),
-                colormap=temp_cmap,
-                plot_soil=False,
-                plot_snow=True,
-                cbar_kwargs={'label': 'Temperature (C)',
-                             'ticks': np.arange(-10, 1, 1)},
-                variable_range=[-10, 1],
-                ax=ax)
-    (summa_df['scalarSnowDepth']).plot(color='k',
-                                       linewidth=2,
-                                       ax=ax,
-                                       label='SUMMA Modeled Snow Depth')
-    snow_depth_obs.plot(color='red',
-                        ls='--',
-                        linewidth=2,
-                        ax=ax,
-                        label='Observed Snow Depth')
-    ax.legend(loc='upper left')
-    start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
-    end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
-    elevation = snotel_df['geometry'].iloc[0][-5:-1]
-    ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
-    ax.set_ylabel('Snow Depth (m)')
-    ax.set_xlabel('Date')
-    return fig
+        fig, ax = plt.subplots(figsize=(8, 5))
+        plot_layers(temp, (depth),
+                    colormap=temp_cmap,
+                    plot_soil=False,
+                    plot_snow=plot_snow,
+                    cbar_kwargs={'label': 'Temperature (C)',
+                                'ticks': np.arange(-10, 1, 1)},
+                    variable_range=[-10, 1],
+                    ax=ax)
+        (summa_df['scalarSnowDepth']).plot(color='k',
+                                        linewidth=2,
+                                        ax=ax,
+                                        label='SUMMA Modeled Snow Depth')
+        snow_depth_obs.plot(color='red',
+                            ls='--',
+                            linewidth=2,
+                            ax=ax,
+                            label='Observed Snow Depth')
+        ax.legend(loc='upper left')
+        start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
+        end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
+        elevation = snotel_df['geometry'].iloc[0][-5:-1]
+        ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
+        ax.set_ylabel('Snow Depth (m)')
+        ax.set_xlabel('Date')
+        return fig
 
 
-def produce_density_depth_fig(summa_df, snotel_df, name):
+def produce_density_depth_fig(summa_df, snotel_df, name, plot_snow=True):
     """
-    
+    Processes density and depth layers from SUMMA and displays a SNOTEL site-specific figure.
+
     Returns:
     - Figure of density of each snow layer
     """
-    # get temperature and depth layers
-    # get depth of each layer
-    depth = summa_df.isel(hru=0)['iLayerHeight']
-    # get density of each layer
-    density = summa_df.isel(hru=0)['mLayerVolFracWat']*1000
-    density = density.where(density >= 0, np.nan)
+        # check that hru, time, and ifcToto are present
+    if not all(val in list(summa_df.dims) for val in ['time', 'ifcToto', 'hru']):
+        raise ValueError('DataArray is missing dimension. Check for hru, time, and ifcToto.')
+    else:
+        # get density and depth layers
+        # get depth of each layer
+        depth = summa_df.isel(hru=0)['iLayerHeight']
+        # get density of each layer
+        density = summa_df.isel(hru=0)['mLayerVolFracWat']*1000
+        density = density.where(density >= 0, np.nan)
 
-    min_time = depth.time.values.min()
-    # get observed snow depth
-    snow_depth_obs = get_snotel_depth(snotel_df, min_time)
+        min_time = depth.time.values.min()
+        # make sure mintime is a datetime object
+        try:
+            min_time = pd.to_datetime(min_time) 
+        except:
+            raise ValueError('min_time is not a datetime object. Check input data.')
+        # get observed snow depth
+        snow_depth_obs = get_snotel_depth(snotel_df, min_time)
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    plot_layers(density, (depth),
-                colormap=density_cmap_r,
-                plot_soil=False,
-                plot_snow=True,
-                cbar_kwargs={'label': 'Density (kg/m$^3$)',
-                             'ticks': np.arange(100, 400, 30)},
-                variable_range=[100, 400],
-                ax=ax)
-    (summa_df['scalarSnowDepth']).plot(color='k',
-                                       linewidth=2,
-                                       ax=ax,
-                                       label='SUMMA Modeled Snow Depth')
-    snow_depth_obs.plot(color='red',
-                        ls='--',
-                        linewidth=2,
-                        ax=ax,
-                        label='Observed Snow Depth')
-    ax.legend(loc='upper left')
-    start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
-    end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
-    elevation = snotel_df['geometry'].iloc[0][-5:-1]
-    ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
-    ax.set_ylabel('Snow Depth (m)')
-    ax.set_xlabel('Date')
-    return fig
+        fig, ax = plt.subplots(figsize=(8, 5))
+        plot_layers(density, (depth),
+                    colormap=density_cmap_r,
+                    plot_soil=False,
+                    plot_snow=plot_snow,
+                    cbar_kwargs={'label': 'Density (kg/m$^3$)',
+                                'ticks': np.arange(100, 400, 30)},
+                    variable_range=[100, 400],
+                    ax=ax)
+        (summa_df['scalarSnowDepth']).plot(color='k',
+                                        linewidth=2,
+                                        ax=ax,
+                                        label='SUMMA Modeled Snow Depth')
+        snow_depth_obs.plot(color='red',
+                            ls='--',
+                            linewidth=2,
+                            ax=ax,
+                            label='Observed Snow Depth')
+        ax.legend(loc='upper left')
+        start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
+        end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
+        elevation = snotel_df['geometry'].iloc[0][-5:-1]
+        ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
+        ax.set_ylabel('Snow Depth (m)')
+        ax.set_xlabel('Date')
+        return fig
 
 
-def produce_liquid_water_depth_fig(summa_df, snotel_df, name):
+def produce_liquid_water_depth_fig(summa_df, snotel_df, name, plot_snow=True):
     """
     INS DOCSTRING
     """
-    # get temperature and depth layers
-    # get depth of each layer
-    depth = summa_df.isel(hru=0)['iLayerHeight']
-    # get density of each layer
-    liq_water = summa_df.isel(hru=0)['mLayerVolFracLiq']*1000
-    liq_water = liq_water.where(liq_water >= 0, np.nan)
+    # check that hru, time, and ifcToto are present
+    if not all(val in list(summa_df.dims) for val in ['time', 'ifcToto', 'hru']):
+        raise ValueError('DataArray is missing dimension. Check for hru, time, and ifcToto.')
+    else:
+        # get water content and depth layers
+        # get depth of each layer
+        depth = summa_df.isel(hru=0)['iLayerHeight']
+        # get density of each layer
+        liq_water = summa_df.isel(hru=0)['mLayerVolFracLiq']*1000
+        liq_water = liq_water.where(liq_water >= 0, np.nan)
 
-    # get observed snow depth
-    snow_depth_obs = get_snotel_depth(snotel_df)
+        min_time = depth.time.values.min()
+        # make sure mintime is a datetime object
+        try:
+            min_time = pd.to_datetime(min_time) 
+        except:
+            raise ValueError('min_time is not a datetime object. Check input data.')
+        
+        # get observed snow depth
+        snow_depth_obs = get_snotel_depth(snotel_df, min_time)
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    plot_layers(liq_water, (depth),
-                colormap=density_cmap_r,
-                plot_soil=False,
-                plot_snow=True,
-                cbar_kwargs={'label': 'Liquid Water Content (kg/m$^3$)',
-                             'ticks': np.arange(0, 100, 10)},
-                variable_range=[0, 100], ax=ax)
-    (summa_df['scalarSnowDepth']).plot(color='k',
-                                       linewidth=2,
-                                       ax=ax,
-                                       label='SUMMA Modeled Snow Depth')
-    snow_depth_obs.plot(color='red',
-                        ls='--',
-                        linewidth=2,
-                        ax=ax,
-                        label='Observed Snow Depth')
-    ax.legend(loc='upper left')
-    start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
-    end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
-    elevation = snotel_df['geometry'].iloc[0][-5:-1]
-    ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
-    ax.set_ylabel('Snow Depth (m)')
-    ax.set_xlabel('Date')
-    return fig
+        fig, ax = plt.subplots(figsize=(8, 5))
+        plot_layers(liq_water, (depth),
+                    colormap=density_cmap_r,
+                    plot_soil=False,
+                    plot_snow=plot_snow,
+                    cbar_kwargs={'label': 'Liquid Water Content (kg/m$^3$)',
+                                'ticks': np.arange(0, 100, 10)},
+                    variable_range=[0, 100], ax=ax)
+        (summa_df['scalarSnowDepth']).plot(color='k',
+                                        linewidth=2,
+                                        ax=ax,
+                                        label='SUMMA Modeled Snow Depth')
+        snow_depth_obs.plot(color='red',
+                            ls='--',
+                            linewidth=2,
+                            ax=ax,
+                            label='Observed Snow Depth')
+        ax.legend(loc='upper left')
+        start = snow_depth_obs.index.min().strftime('%Y-%m-%d %H:%M')
+        end = snow_depth_obs.index.max().strftime('%Y-%m-%d %H:%M')
+        elevation = snotel_df['geometry'].iloc[0][-5:-1]
+        ax.set_title(f"{name} Snow Depth\n{start} to {end}\nElevation: {elevation} ft")
+        ax.set_ylabel('Snow Depth (m)')
+        ax.set_xlabel('Date')
+        return fig

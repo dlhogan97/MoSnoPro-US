@@ -244,6 +244,11 @@ def get_snotel_depth(df, min_time):
     Returns:
     - pandas.Series: time series of daily snow depth observations (meters)
     """
+    # make sure the snotel df is a datetime index
+    if not isinstance(df.index, pd.DatetimeIndex):
+        raise ValueError('snotel_df index is not a datetime index. Check input data.')
+    else:
+        pass
     # get snotel observation depth
     snow_depth_obs = df.loc[min_time:]['SNOWDEPTH'].resample('1D').max().shift() * 2.54/100
     # replace below zero values with 0
