@@ -162,7 +162,7 @@ elif section == "Interactive Map":
                 with time_col:
                     time_range = st.radio(
                         "Select Time Range:", 
-                        ["Default", "Recent Week", "Recent Month"],
+                        ["Entire period", "Recent Week", "Recent Month"],
                         key = "time_range",
                     )
 
