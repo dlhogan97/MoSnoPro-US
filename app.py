@@ -174,7 +174,7 @@ elif section == "Interactive Map":
                         key = "plot_type",
                     )
 
-                if time_range == "Default":
+                if time_range == "Entire period":
                     time_slice = slice(None)
                 elif time_range == "Recent Week":
                     time_slice = slice(

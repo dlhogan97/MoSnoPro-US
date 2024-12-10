@@ -1,3 +1,7 @@
+## 12-10
+**Final session before presentation**
+
+
 ## 12-03
 **Alerts for next week**
 - Presentations are 5 min, cover 5 main things:
