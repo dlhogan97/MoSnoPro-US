@@ -5,6 +5,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from mosnopro_us.utils import justify
+from mosnopro_us.data_manager import get_snotel_depth
 import matplotlib.colors as colors
 import pandas as pd
 
@@ -198,21 +199,6 @@ density_cmap = colors.LinearSegmentedColormap.from_list("density", COLORS)
 # create the inverse
 density_cmap_r = colors.LinearSegmentedColormap.from_list(
     "density_r", COLORS_r)
-
-
-def get_snotel_depth(df, min_time):
-    """This function gets the observed snow depth
-    from the snotel and returns it as a pandas series"""
-    # get snotel observation depth
-    snow_depth_obs = df.loc[min_time:]['SNOWDEPTH'].resample('1D').max().shift() * 2.54/100
-    # replace below zero values with 0
-    snow_depth_obs[snow_depth_obs < 0] = 0
-    # replace nan values with nan
-    snow_depth_obs[abs(snow_depth_obs.diff()) > 25] = np.nan
-    # interpolate missing values
-    snow_depth_obs = snow_depth_obs.interpolate()
-    return snow_depth_obs
-
 
 def produce_temp_depth_fig(summa_df, snotel_df, name):
     # get temperature and depth layers

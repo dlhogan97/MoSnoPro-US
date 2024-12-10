@@ -1,6 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 import xarray as xr
+import numpy as np
 import importlib.resources as pkg_resources
 import dropbox
 import io
@@ -63,7 +64,6 @@ def summarize_snotel_points(gdf):
     Extracts key "demographics" from Snotel sites.
     """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
-
 
 def load_pandas_df_from_dropbox(dropbox_file_path):
     """
@@ -180,6 +180,37 @@ def load_xarray_file_from_examples(file_name):
         file_path = os.path.join(data_dir, file_name)
 
         # Load the xarray file using xarray
-        return xr.open_dataset(file_path)
+        ds = xr.open_dataset(file_path)
+        return ds 
     except Exception as e:
         raise ValueError(f"Error loading xarray file '{file_name}': {e}")
+    
+def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=2148):
+    """
+    Check if the length of the DataFrame index matches the length of the Dataset's time dimension.
+    
+    Parameters:
+        dataframe (pd.DataFrame): The dataframe to compare.
+        dataset (xr.Dataset): The dataset to compare.
+        time_dimension (str): The name of the time dimension in the dataset.
+        extra_length (int): Number of timesteps that the dataframe has for runup that are greater than the model output
+    
+    Returns:
+        bool: True if lengths match, False otherwise.
+    """
+    df_length = len(dataframe.iloc[extra_length:])
+    ds_length = len(dataset[time_dimension])
+    return df_length == ds_length
+
+def get_snotel_depth(df, min_time):
+    """This function gets the observed snow depth
+    from the snotel and returns it as a pandas series"""
+    # get snotel observation depth
+    snow_depth_obs = df.loc[min_time:]['SNOWDEPTH'].resample('1D').max().shift() * 2.54/100
+    # replace below zero values with 0
+    snow_depth_obs[snow_depth_obs < 0] = 0
+    # replace nan values with nan
+    snow_depth_obs[abs(snow_depth_obs.diff()) > 25] = np.nan
+    # interpolate missing values
+    snow_depth_obs = snow_depth_obs.interpolate()
+    return snow_depth_obs
