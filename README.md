@@ -21,8 +21,17 @@ The model we will be using is called SUMMA (Structure for Unifying Multiple Mode
 
 Using Streamlit as a tool to visualize data.
 
-#### **Team:**
-Danny Hogan, Civil and Environmental Engineering (lead)
-Bow Sruangsung, Civil and Environmental Engineering
-Xinya Tang, iSchool
-Jane Dai, School of Public Health
+### **Team:**
+Danny Hogan, Civil and Environmental Engineering (lead)  
+Bow Sruangsung, Civil and Environmental Engineering  
+Xinya Tang, iSchool  
+Jane Dai, School of Public Health  
+
+#### Contribution Taxonomy (initials)
+- Wrote python functions
+- Wrote tests
+- Human centered design
+- Wrote documentation
+- Set up packaging
+- Set up CI
+- Code review
