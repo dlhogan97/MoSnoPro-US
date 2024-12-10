@@ -38,20 +38,42 @@ def load_geojson(file_name):
 
 def load_snotel_points():
     """
+    Reads and returns geospatial data for SNOTEL points (Snow Telemetry monitoring stations) in Washington state from a GeoJSON file.
 
+    Parameters:
+    - "WA_snotel_points.geojson" pre-set data, outputted from load_geojson function
+
+    Returns:
+    - GeoJSON object/dict containing SNOTEL point data.
     """
     return load_geojson("WA_snotel_points.geojson")
 
 
 def load_washington_boundary():
     """
+    Reads and returns the geospatial boundary data for Washington state.
+
+    Parameters:
+    - Outputs from load_geojson function
+
+    Returns:
+    - GeoJSON object/dict containing boundary data for Washington state
     """
     return load_geojson("washington.geojson")
 
 
 def load_snow_depth_data(file_path):
     """
-    Loads snow depth data from Dropbox.
+    Reads snow depth data from a CSV file. Parses "Date" column as datetime objects.
+
+    Parameters:
+    - file_name (str): Name of the CSV file to load.
+
+    Returns:
+    - DataFrame containing the datatime objects.
+
+    Raises:
+    - ValueError: If the file cannot be loaded or doesn't exist.
     """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
@@ -61,7 +83,13 @@ def load_snow_depth_data(file_path):
 
 def summarize_snotel_points(gdf):
     """
-    Extracts key "demographics" from Snotel sites.
+    Extracts key attributes ("demographics") from SNOTEL sites.
+
+    Parameters:
+    - GeoDataFrame: containing SNOTEL point data with all columns
+
+    Returns:
+    - GeoDataFrame: containing only Name, Elevation, Latitude, Longitude columns
     """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
@@ -203,8 +231,19 @@ def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=
     return df_length == ds_length
 
 def get_snotel_depth(df, min_time):
-    """This function gets the observed snow depth
-    from the snotel and returns it as a pandas series"""
+    """
+    This function processes daily snow depth observations from SNOTEL sites and returns it as a pandas series. It performs the following steps: 
+        - Filters data to include records from `min_time` onwards (specified by user)
+        - Cleans out-of-range data by replacing negative values with 0 and values with large sudden changes (>25) with NaN to be interpolated linearly
+        - Takes maximum snow depth daily
+        - Converts from inches to meters
+
+    Parameters:
+    - df: SNOTEL dataframe with observation data
+
+    Returns:
+    - pandas.Series: time series of daily snow depth observations (meters)
+    """
     # get snotel observation depth
     snow_depth_obs = df.loc[min_time:]['SNOWDEPTH'].resample('1D').max().shift() * 2.54/100
     # replace below zero values with 0
