@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from .utils import justify
+from mosnopro_us.utils import justify
 import matplotlib.colors as colors
 import pandas as pd
 

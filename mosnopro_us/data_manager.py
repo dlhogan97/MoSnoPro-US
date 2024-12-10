@@ -90,7 +90,7 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
         metadata, res = dbx.files_download(dropbox_file_path)
         file_content = io.BytesIO(res.content)
 
-        # Load the file content as an xarray dataset
+        # Load the file content as an pandas dataframe
         df = pd.read_csv(file_content, index_col=0,
                          parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
         df.index = pd.to_datetime(df.index)
@@ -99,6 +99,34 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
     except Exception as e:
         raise RuntimeError(f"Failed to read file from Dropbox: {e}")
 
+def load_pandas_file_from_examples(file_name):
+    """
+    Loads a CSV file from the `examples` directory.
+
+    Parameters:
+    - file_name (str): Name of the CSV file to load.
+
+    Returns:
+    - pd.DataFrame: A pandas DataFrame containing the data from the CSV file.
+
+    Raises:
+    - ValueError: If the file cannot be loaded or doesn't exist.
+
+    """
+    try:
+        # Dynamically construct the file path relative to this script's location
+        base_dir = os.path.dirname(__file__)  # Directory of the current script
+        data_dir = os.path.join(base_dir, "../data/example_data/")  # Subdirectory containing data files
+        file_path = os.path.join(data_dir, file_name)
+
+        # Load the CSV file using pandas
+        df = pd.read_csv(file_path, index_col=0,
+                         parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_localize(None)
+        return df
+    except Exception as e:
+        raise ValueError(f"Error loading CSV file '{file_name}': {e}")
 
 def load_xarray_file_from_dropbox(dropbox_file_path):
     """
@@ -130,3 +158,28 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
         return dataset
     except Exception as e:
         raise RuntimeError(f"Failed to read file from Dropbox: {e}")
+
+def load_xarray_file_from_examples(file_name):
+    """
+    Loads an xarray file from the `examples` directory.
+
+    Parameters:
+    - file_name (str): Name of the xarray file to load.
+
+    Returns:
+    - xr.Dataset: An xarray Dataset containing the data from the file.
+
+    Raises:
+    - ValueError: If the file cannot be loaded or doesn't exist.
+
+    """
+    try:
+        # Dynamically construct the file path relative to this script's location
+        base_dir = os.path.dirname(__file__)  # Directory of the current script
+        data_dir = os.path.join(base_dir, "../data/example_data/")  # Subdirectory containing data files
+        file_path = os.path.join(data_dir, file_name)
+
+        # Load the xarray file using xarray
+        return xr.open_dataset(file_path)
+    except Exception as e:
+        raise ValueError(f"Error loading xarray file '{file_name}': {e}")
