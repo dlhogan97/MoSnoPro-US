@@ -201,6 +201,17 @@ density_cmap_r = colors.LinearSegmentedColormap.from_list(
     "density_r", COLORS_r)
 
 def produce_temp_depth_fig(summa_df, snotel_df, name):
+    """
+    Processes temperature and depth layers from SUMMA and displays a SNOTEL site-specific figure.
+
+    Parameters:
+    - summa_df: Model output, extract only depth and temp attributes
+    - snotel_df: Key summary attributes of SNOTEL site for display on figure
+    - name: user-specified name (str) based on what is clicked on the main map
+
+    Returns:
+    - Figure of temperature of each snow layer
+    """
     # get temperature and depth layers
     # get depth of each layer
     depth = summa_df.isel(hru=0)['iLayerHeight']
@@ -242,6 +253,11 @@ def produce_temp_depth_fig(summa_df, snotel_df, name):
 
 
 def produce_density_depth_fig(summa_df, snotel_df, name):
+    """
+    
+    Returns:
+    - Figure of density of each snow layer
+    """
     # get temperature and depth layers
     # get depth of each layer
     depth = summa_df.isel(hru=0)['iLayerHeight']
@@ -282,6 +298,9 @@ def produce_density_depth_fig(summa_df, snotel_df, name):
 
 
 def produce_liquid_water_depth_fig(summa_df, snotel_df, name):
+    """
+    INS DOCSTRING
+    """
     # get temperature and depth layers
     # get depth of each layer
     depth = summa_df.isel(hru=0)['iLayerHeight']
