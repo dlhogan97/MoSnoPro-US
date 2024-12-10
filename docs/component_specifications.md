@@ -7,20 +7,25 @@
 - Inputs: separate shapefiles for geography and boundary lines for northwest region, WA state counties
 - Outputs: WA state map overlaid (highlighted) over a faded out mapview of the broader region, which works because the state's county boundaries will be defined (but not selectable). 
 - Components used
-	- Map, station database, visualization database, user input point/click
+	- Map, station database, visualization database, user input point/click, curser zoom in/out
 - Side Effects
-	- Filled blank space below the map upon click
+	- Filled blank space to the right the map upon click
 	- Site metadata (summary) appears upon hover on map next to station
 
 #### Points on map
-- What it does: Displays individual locations of approximately 80 SNOTEL sites across Washington State as dots/buttons. 
+- What it does: Displays individual locations of approximately 10 SNOTEL sites across Washington State as black dots. 
 - Inputs: latitude and longitude data for each station location
-- ...
+- Outputs: Extracted string name of SNOTEL site to be piped into database, will filter for model outputs based on selected site
+- Components used
+- Side effects
 
 
 ### Side-bar, left
-- What it does: Displays three panels, each with different options for what can be displayed in the bottom panel
-- ...
+- What it does: Displays two options for the main screen in Streamlit (Overview page, Interactive map)
+- Inputs: String text
+- Outputs: Main screen display
+- Components used
+- Side effects
 
 #### Data Filtering
 - What it does: provide the user with a few different options for what data is displayed. Allows customization based on location and snowpack attributes (filter out based the dangerous level, or based on the specific location )
@@ -73,3 +78,14 @@
 ## Interactions to Accomplish Use Cases
 
 ## Preliminary Plan
+- Set up project directory to follow package requirements
+- Set up project directory to follow test-driven software development framework
+- Double-check model can generate plots for SNOTEL sites, assess time-to-completion to understand user wait-time burden
+- Build plotting functions based on SNOTEL string names
+- Update "secrets" for Dropbox file access to model data (Streamlit can handle the raw output to generate maps on command)
+- Write and test functions for gathering model output
+- Write and test functions for plotting model output
+- Write and test functions for user experience fine-tuning in Streamlit
+- Determine best approach for using Streamlit (Folium)
+- Update doc strings for all functions
+- Continue to iterate (code review, documentation), or at least identify areas that need continuous refinement
