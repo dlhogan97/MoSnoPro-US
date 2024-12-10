@@ -1,5 +1,4 @@
 import pytest
-import dropbox
 from mosnopro_us.data_manager import *
 import pandas as pd
 import xarray as xr
@@ -16,7 +15,7 @@ def test_xarray_db_connection():
         db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
         ds = load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
     else:
-        db_xr_file = f"../../data/example_data/output/_{site}_timestep.nc"
+        db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
         ds = load_xarray_file_from_examples(db_xr_file)
 
     # Test if the returned value from this function is an xarray dataset
@@ -33,7 +32,7 @@ def test_pandas_db_connection():
         db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
         df = load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
     else:
-        db_pd_file = f"../../data/example_data/snotel_csvs/{site}.csv"
+        db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
         df = load_pandas_file_from_examples(db_pd_file)
 
     # Test if the returned value from this function is a pandas dataframe
@@ -120,8 +119,8 @@ def test_missing_time_dimension():
 # test one of the example files to make sure it will work
 def test_example_dimension():
     site = "Paradise"
-    db_xr_file = f"../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
+    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
     # test the dimesion match
@@ -132,8 +131,8 @@ def test_example_dimension():
 # test that the max SNOWDEPTH is less than 20 meters
 def test_max_values():
     site = "Paradise"
-    db_xr_file = f"../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
+    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
     
@@ -142,8 +141,8 @@ def test_max_values():
 def test_min_values():
     import datetime as dt
     site = "Wells_Creek"
-    db_xr_file = f"../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
+    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
 

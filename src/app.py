@@ -32,8 +32,8 @@ if st.secrets:
     SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
 else:
     print("Secrets file not found. Using example data instead.")
-    SNOTEL_PATH = "./data/example_data/snotel_csvs/"
-    SUMMA_PATH = "./data/example_data/output/"
+    SNOTEL_PATH = "../data/example_data/snotel_csvs/"
+    SUMMA_PATH = "../data/example_data/output/"
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
