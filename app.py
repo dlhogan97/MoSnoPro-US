@@ -7,6 +7,7 @@ from mosnopro_us import data_manager, plotting, map_builder
 from streamlit_folium import st_folium
 import streamlit as st
 import pandas as pd
+import os 
 
 
 # Configure logging
@@ -31,7 +32,8 @@ if st.secrets:
     SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
 else:
     print("Secrets file not found. Using example data instead.")
-    SNOTEL_PATH = "./data/example_data/"
+    SNOTEL_PATH = "./data/example_data/snotel_csvs/"
+    SUMMA_PATH = "./data/example_data/output/"
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
