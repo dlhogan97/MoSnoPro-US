@@ -2,17 +2,21 @@
 This is the main application file for MoSnoPro-US Dashboard.
 It provides an interactive interface for visualizing snowpack properties.
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import logging
+from mosnopro_us import data_manager, plotting, map_builder
+from streamlit_folium import st_folium
 import streamlit as st
 import pandas as pd
-from streamlit_folium import st_folium
-from mosnopro_us import data_manager, plotting, map_builder
+
 
 # Configure logging
 logging.basicConfig(
     filename="mosnopro_us.log",
     level=logging.ERROR,
-    format="%(asctime)s %(levelname)s%(message)s"
+    format="%(asctime)s %(levelname)s %(message)s"
 )
 
 # Set page config
@@ -20,6 +24,7 @@ st.set_page_config(
     page_title="MoSnoPro-US Dashboard",
     page_icon="🏔️",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 # Constants
@@ -38,19 +43,7 @@ st.markdown(
     snowpack instabilities and potential avalanche risks.
     """
 )
-
-# Add custom CSS to reduce sidebar width
-st.markdown(
-    """
-    <style>
-    [data-testid="stSidebar"] {
-        min-width: 200px;  
-        max-width: 200px;  
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("---")
 
 # Sidebar Navigation
 st.sidebar.title("Navigation")
@@ -123,13 +116,13 @@ if section == "Overview":
 
 # Interactive Map and Visualization
 elif section == "Interactive Map":
-    st.markdown("## Interactive Map")
+    st.subheader("Interactive Map")
     st.markdown(
         "Click on a Snotel site to produce a figure of Snow Depth versus Temperature or Density.")
     left, right = st.columns(2)
 
     with left:
-        st.markdown("### Map")
+        st.markdown("### Select a SNOTEL Site")
         m = map_builder.plot_map()
 
         # save points clicked to variable
@@ -137,7 +130,7 @@ elif section == "Interactive Map":
         st_data = st_folium(
             m,
             returned_objects=['last_active_drawing', 'last_object_clicked_popup'],
-            width=725, height=600
+            width=725, height=500
         )
 
     with right:
@@ -160,9 +153,23 @@ elif section == "Interactive Map":
 
                 # Time Range Selection
                 st.markdown("### Time Range")
-                time_range = st.radio(
-                    "Select Time Range:", ["Default", "Recent Week", "Recent Month"]
-                )
+                time_col, plot_col = st.columns(2)
+
+                with time_col:
+                    time_range = st.radio(
+                        "Select Time Range:", 
+                        ["Default", "Recent Week", "Recent Month"],
+                        key = "time_range",
+                    )
+
+                with plot_col:
+                     # User selection of Map type
+                    plot_type = st.radio(
+                        "Select Plot Type:", 
+                        ["Temperature", "Density"],
+                        key = "plot_type",
+                    )
+
                 if time_range == "Default":
                     time_slice = slice(None)
                 elif time_range == "Recent Week":
@@ -176,13 +183,9 @@ elif section == "Interactive Map":
 
                 # Filter data by selected time range
                 filtered_summa_data, filtered_snotel_data = load_and_filter_data(site, time_slice)
-
-                # User selection of Map type
-                plot_type = st.radio("Select Plot Type:", ["Temperature", "Density"])
                 fig = plot_selected_figure(
-                    filtered_summa_data, filtered_snotel_data, site, plot_type
+                        filtered_summa_data, filtered_snotel_data, site, plot_type
                 )
-
                 # Display the figure
                 st.pyplot(fig)
 
