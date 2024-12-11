@@ -4,37 +4,69 @@ MoSnoPro-US stands for Modeling Snow Properties - Using SUMMA, a modeling and vi
 ### **Key directory structure**
 MoSnoPro-US/
 ├── LICENSE
+
 ├── pyproject.toml
+
 ├── README.md
+
 ├── environment.yml
+
 ├── examples/
+
 │   └── example_usage.py
+
 │   └── figures/
+
 │       ├── multiple example graphs that are generated from SUMMA
+
 ├── data/
+
 │   └── example_data/
+
 │       ├── accessible data outside of Dropbox
+
 │   └── WA_snotel_points.geojson
+
 │   └── washington.geojson
+
 ├── docs/
+
 │       ├── component_specifications.md
+
 │       ├── functional_specifications.md 
+
 │       ├── meeting_notes.md
+
 │       ├── Technology review.pdf
+
 ├── src/
+
 │   └── app.py <- this is the Streamlit visualization app
+
 │   └── mosnopro_us/
+
 │       ├── init.py
+
 │       ├── data_manager.py
+
 │       ├── map_builder.py
+
 │       ├── plotting.py
+
 │       ├── utils.py
+
 │       ├── test/
+
 │           ├── init.py
-│           └── test_app.py
+
+│           ├── test_app.py
+
 │           ├── test_data_manager.py
-│           └── test_map_builder.py
-│           └── test_plotting.py
+
+│           ├── test_map_builder.py
+
+│           ├── test_plotting.py
+
 
 - `examples/`: This contains an example of running the project. It also contains example visualizations of snowpack density and temperature that are key features for avalanche forecasting.
 - `data/`: This directory holds the multi-source data files used in the project. It also contains a folder of outdated data that can be accessible without secret Dropbox access codes.
