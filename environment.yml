@@ -7,7 +7,8 @@ dependencies:
   - cufflinks-py=0.17.3
   - dropbox=12.0.2
   - folium=0.18.0
-  - geopandas
+  - geopandas=1.0.1
+  - geopandas-base=1.0.1
   - h5netcdf=1.4.1
   - ipython=8.29.0
   - ipywidgets=8.1.5
@@ -23,6 +24,4 @@ dependencies:
   - scipy=1.14.1
   - streamlit=1.40.2
   - streamlit-folium=0.23.2
-  - unittest
-  - xarray
-prefix: /home/dlhogan/miniconda3/envs/project_env
+  - xarray=2024.10.0
