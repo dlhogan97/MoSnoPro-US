@@ -5,8 +5,8 @@ import xarray as xr
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from src.mosnopro_us.utils import justify
-from src.mosnopro_us.data_manager import get_snotel_depth
+from mosnopro_us.utils import justify
+from mosnopro_us.data_manager import get_snotel_depth
 import matplotlib.colors as colors
 import pandas as pd
 

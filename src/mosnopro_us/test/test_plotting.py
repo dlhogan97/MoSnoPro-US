@@ -4,7 +4,7 @@ import pandas as pd
 import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-from src.mosnopro_us.plotting import plot_layers, produce_temp_depth_fig, produce_density_depth_fig, produce_liquid_water_depth_fig
+from mosnopro_us.plotting import plot_layers, produce_temp_depth_fig, produce_density_depth_fig, produce_liquid_water_depth_fig
 
 class TestPlotLayers(unittest.TestCase):
     

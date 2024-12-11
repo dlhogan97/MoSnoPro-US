@@ -1,5 +1,5 @@
 import folium
-from src.mosnopro_us.data_manager import load_snotel_points, load_washington_boundary
+from mosnopro_us.data_manager import load_snotel_points, load_washington_boundary
 from pyproj import Transformer
 
 def plot_map():

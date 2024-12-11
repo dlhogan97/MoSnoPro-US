@@ -1,5 +1,5 @@
 import pytest
-from src.mosnopro_us.data_manager import *
+from mosnopro_us.data_manager import *
 import pandas as pd
 import xarray as xr
 import streamlit as st

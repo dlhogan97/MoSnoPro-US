@@ -1,7 +1,7 @@
 import pytest
 import folium
-from src.mosnopro_us.data_manager import load_snotel_points
-from src.mosnopro_us.map_builder import plot_map
+from mosnopro_us.data_manager import load_snotel_points
+from mosnopro_us.map_builder import plot_map
 
 @pytest.fixture
 def map_object():
