@@ -1,10 +1,77 @@
 """
 This module contains unit tests for the app.py functionality in the Mosnopro US project.
 """
-
-from unittest.mock import patch, MagicMock
+import os
 import pytest
+import pandas as pd
+import xarray as xr
+from unittest.mock import patch, MagicMock
+from app import load_and_filter_data, plot_selected_figure
 from mosnopro_us import data_manager
+
+# Path to example data
+SUMMA_PATH = "./data/example_data/output/"
+SNOTEL_PATH = "./data/example_data/snotel_csvs/"
+
+def test_load_and_filter_data_with_example_data():
+    """
+    Test load_and_filter_data function with example data.
+    """
+    # Pick and example site from the available data
+    site = "White_Pass"
+    summa_file = os.path.join(SUMMA_PATH, f"_{site}_timestep.nc")
+    snotel_file = os.path.join(SNOTEL_PATH, f"{site}.csv")
+    
+    # Ensure the files exist
+    assert os.path.exists(summa_file), f"SUMMA file not found: {site}"
+    assert os.path.exists(snotel_file), f"SNOTEL file not found: {site}"
+
+    # Load data directly
+    summa_data = xr.open_dataset(summa_file)
+    snotel_data = pd.read_csv(snotel_file, parse_dates=["time"], index_col="time")
+    snotel_data.index = snotel_data.index.tz_localize(None)
+
+    # Define a time slice that matches the SNOTEL data
+    time_slice = slice("2024-07-03", "2024-12-09")
+
+    # Use the function to load and filter the data
+    filtered_summa_data, filtered_snotel_data = load_and_filter_data(site, time_slice)
+
+    assert filtered_summa_data is not None, "Filtered SUMMA data should not be None"
+    assert filtered_summa_data.sizes["time"] > 0, "Filtered SUMMA data should not be empty"
+    assert len(filtered_snotel_data) > 0, "Filtered SNOTEL data should not be empty"
+
+def test_plot_selected_figure_with_example_data():
+    """
+    Test plot_selected_figure function with example data.
+    """
+    # Load example data
+    site = "White_Pass"
+    summa_file = os.path.join(SUMMA_PATH, f"_{site}_timestep.nc")
+    snotel_file = os.path.join(SNOTEL_PATH, f"{site}.csv")
+
+    summa_data = xr.open_dataset(summa_file)
+    snotel_data = pd.read_csv(snotel_file, parse_dates=["time"], index_col="time")
+    snotel_data.index = snotel_data.index.tz_localize(None)
+
+    # Define a time slice that matches the SNOTEL data
+    time_slice = slice("2024-07-03", "2024-12-09")
+
+    # Filter the data
+    filtered_summa_data = summa_data.sel(time=time_slice)
+    filtered_snotel_data = snotel_data.loc[time_slice]
+
+    # Test Temperature plot
+    fig_temp = plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, "Temperature")
+    assert fig_temp is not None, "Temperature figure should not be None"
+
+    # Test Density plot
+    fig_density = plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, "Density")
+    assert fig_density is not None, "Density figure should not be None"
+
+    # Test invalid plot type
+    with pytest.raises(ValueError):
+        plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, "InvalidType")
 
 def test_site_selection_transfer(monkeypatch):
     """
@@ -19,11 +86,11 @@ def test_site_selection_transfer(monkeypatch):
         }
     }
     # Patch the 'st_folium' function to return the mock data
-    monkeypatch.setattr("mosnopro_us.app.st_folium", MagicMock(return_value=mock_map_data))
+    monkeypatch.setattr("app.st_folium", MagicMock(return_value=mock_map_data))
 
     # Test if the corect site is processed
-    with patch("mosnopro_us.app.st.sidebar.radio", return_value="Interactive Map"), \
-        patch("mosnopro_us.app.st.write") as mock_write, \
+    with patch("app.st.sidebar.radio", return_value="Interactive Map"), \
+        patch("app.st.write") as mock_write, \
         patch("mosnopro_us.data_manager.load_pandas_df_from_dropbox") as mock_load_csv, \
         patch("mosnopro_us.data_manager.load_xarray_file_from_dropbox") as mock_load_nc:
 
@@ -38,7 +105,7 @@ def test_site_selection_transfer(monkeypatch):
 
         mock_write.assert_any_call(
             f"Producing figure for {site_name_transformed}... Please wait..."
-        )   
+        )
 
 def test_timeout_handling(monkeypatch):
     """
@@ -71,7 +138,7 @@ def test_secrets_availability(monkeypatch):
             "refresh_token": "dummy_token"
         }
     }
-    monkeypatch.setattr("mosnopro_us.app.st.secrets", mock_secrets)
+    monkeypatch.setattr("app.st.secrets", mock_secrets)
 
     #Validate secrets
     secrets = mock_secrets["db_credentials"]
