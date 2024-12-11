@@ -1,6 +1,16 @@
 ## 12-10
 **Final session before presentation**
-
+- Still mostly need tests for plotting.py
+  - Did a plot show up? 
+  - Did data get ported and processed properly?
+  - Could also categorize by user type (plot-based, code-based)
+- `src` as a folder -- do we need to create this and have most mosnopro inside `src` as well as app.py? 
+  - run the app from `src` 
+- Write up slides for presentation
+- Write up full documentation for "how to use this app"
+  - Add details in README to contact someone for real data (since it requires the secrets file) for someone who would want to build on top of it
+- Jane to finish all documentation, Xinya to finish formatting specs
+- Our "example": run the app with example data
 
 ## 12-03
 **Alerts for next week**
