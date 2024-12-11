@@ -35,10 +35,10 @@ def load_geojson(file_name):
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
 
 
-
 def load_snotel_points():
     """
-    Reads and returns geospatial data for SNOTEL points (Snow Telemetry monitoring stations) in Washington state from a GeoJSON file.
+    Reads and returns geospatial data for SNOTEL points (Snow Telemetry monitoring stations)
+    in Washington state from a GeoJSON file.
 
     Parameters:
     - "WA_snotel_points.geojson" pre-set data, outputted from load_geojson function
@@ -93,6 +93,7 @@ def summarize_snotel_points(gdf):
     """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
+
 def load_pandas_df_from_dropbox(dropbox_file_path):
     """
     Reads an csv file directly from Dropbox into memory.
@@ -127,6 +128,7 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
     except Exception as e:
         raise RuntimeError(f"Failed to read file from Dropbox: {e}")
 
+
 def load_pandas_file_from_examples(file_name):
     """
     Loads a CSV file from the `examples` directory.
@@ -150,7 +152,7 @@ def load_pandas_file_from_examples(file_name):
         # Load the xarray file using xarray
         # Load the CSV file using pandas
         df = pd.read_csv(file_path, index_col=0,
-                        parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
+                         parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_localize(None)
         return df
@@ -214,20 +216,21 @@ def load_xarray_file_from_examples(file_name):
     if os.path.exists(file_path):
         # Load the xarray file using xarray
         ds = xr.open_dataset(file_path)
-        return ds 
+        return ds
     else:
         raise FileNotFoundError(f"{file_path} not found. Check the site name or path.")
-    
+
+
 def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=2148):
     """
     Check if the length of the DataFrame index matches the length of the Dataset's time dimension.
-    
+
     Parameters:
         dataframe (pd.DataFrame): The dataframe to compare.
         dataset (xr.Dataset): The dataset to compare.
         time_dimension (str): The name of the time dimension in the dataset.
         extra_length (int): Number of timesteps that the dataframe has for runup that are greater than the model output
-    
+
     Returns:
         bool: True if lengths match, False otherwise.
     """
@@ -235,11 +238,14 @@ def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=
     ds_length = len(dataset[time_dimension])
     return df_length == ds_length
 
+
 def get_snotel_depth(df, min_time):
     """
-    This function processes daily snow depth observations from SNOTEL sites and returns it as a pandas series. It performs the following steps: 
+    This function processes daily snow depth observations from SNOTEL sites and returns it as a pandas series. 
+    It performs the following steps:
         - Filters data to include records from `min_time` onwards (specified by user)
-        - Cleans out-of-range data by replacing negative values with 0 and values with large sudden changes (>25) with NaN to be interpolated linearly
+        - Cleans out-of-range data by replacing negative values with 0 and
+        values with large sudden changes (>25) with NaN to be interpolated linearly
         - Takes maximum snow depth daily
         - Converts from inches to meters
 

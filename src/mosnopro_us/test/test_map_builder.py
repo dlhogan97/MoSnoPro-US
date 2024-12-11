@@ -3,6 +3,7 @@ import folium
 from mosnopro_us.data_manager import load_snotel_points
 from mosnopro_us.map_builder import plot_map
 
+
 @pytest.fixture
 def map_object():
     """Fixture to generate the map object."""
@@ -34,6 +35,7 @@ def test_map_has_correct_sites(map_object):
             assert "id" in tooltip_fields, "Tooltip does not contain 'id'"
             assert "alt" in tooltip_fields, "Tooltip does not contain 'alt'"
             break
+
 
 def test_altitude_values(snotel_data):
     """

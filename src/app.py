@@ -7,7 +7,7 @@ from mosnopro_us import data_manager, plotting, map_builder
 from streamlit_folium import st_folium
 import streamlit as st
 import pandas as pd
-import os 
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -31,8 +31,8 @@ if os.path.exists('../.streamlit/secrets.toml'):
     SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
 else:
     print("Secrets file not found. Using example data instead.")
-    SNOTEL_PATH = "../data/example_data/snotel_csvs/"
-    SUMMA_PATH = "../data/example_data/output/"
+    SNOTEL_PATH = "snotel_csvs/"
+    SUMMA_PATH = "output/"
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
@@ -52,6 +52,7 @@ st.markdown("---")
 st.sidebar.title("Navigation")
 section = st.sidebar.radio("Go to", ["Overview", "Interactive Map"])
 
+
 # Helper Functions
 def load_and_filter_data(site, time_slice):
     """
@@ -67,13 +68,18 @@ def load_and_filter_data(site, time_slice):
     # Path to csv in Dropbox
     db_pd_file = f"{SNOTEL_PATH}{site}.csv"
 
-    snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
-    summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
+    if not os.path.exists('../.streamlit/secrets.toml'):
+        snotel_df = data_manager.load_pandas_file_from_examples(db_pd_file)
+        summa_ds = data_manager.load_xarray_file_from_examples(db_xr_file)
+    else:
+        snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
+        summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
 
     filtered_summa_data = summa_ds.sel(time=time_slice)
     filtered_snotel_data = snotel_df.loc[time_slice]
 
     return filtered_summa_data, filtered_snotel_data
+
 
 def plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, plot_type):
     """
@@ -96,6 +102,7 @@ def plot_selected_figure(filtered_summa_data, filtered_snotel_data, site, plot_t
         return plotting.produce_density_depth_fig(filtered_summa_data, filtered_snotel_data, site)
 
     raise ValueError(f"Invalid plot type: {plot_type}. Choose from 'Temperature' or 'Density'.")
+
 
 # Overview Section
 if section == "Overview":
@@ -160,17 +167,17 @@ elif section == "Interactive Map":
 
                 with time_col:
                     time_range = st.radio(
-                        "Select Time Range:", 
+                        "Select Time Range:",
                         ["Entire period", "Recent Week", "Recent Month"],
-                        key = "time_range",
+                        key="time_range",
                     )
 
                 with plot_col:
-                     # User selection of Map type
+                    # User selection of Map type
                     plot_type = st.radio(
-                        "Select Plot Type:", 
+                        "Select Plot Type:",
                         ["Temperature", "Density"],
-                        key = "plot_type",
+                        key="plot_type",
                     )
 
                 if time_range == "Entire period":

@@ -98,7 +98,7 @@ def plot_layers(var, depth, ax=None, colormap='viridis', plot_soil=True,
                 y[np.isnan(y)] = 0
                 if (y != 0).any():
                     ax.vlines(time, ymin=0, ymax=-y,
-                            color=rgba[lhi], **line_kwargs)
+                              color=rgba[lhi], **line_kwargs)
 
         # Add the colorbar
         mappable = cm.ScalarMappable(norm=norm, cmap=cmap)
@@ -115,7 +115,8 @@ def plot_layers(var, depth, ax=None, colormap='viridis', plot_soil=True,
             plt.gcf().colorbar(mappable, **cbar_kwargs)
         return ax, mappable
 
-##### Create colormaps
+
+# Create colormaps
 # The range of temperature bins in Fahrenheit
 a = np.arange(-20, 5, 1)
 
@@ -202,6 +203,7 @@ density_cmap = colors.LinearSegmentedColormap.from_list("density", COLORS)
 density_cmap_r = colors.LinearSegmentedColormap.from_list(
     "density_r", COLORS_r)
 
+
 def produce_temp_depth_fig(summa_df, snotel_df, name, plot_snow=True):
     """
     Processes temperature and depth layers from SUMMA and displays a SNOTEL site-specific figure.
@@ -236,13 +238,13 @@ def produce_temp_depth_fig(summa_df, snotel_df, name, plot_snow=True):
                     plot_soil=False,
                     plot_snow=plot_snow,
                     cbar_kwargs={'label': 'Temperature (C)',
-                                'ticks': np.arange(-10, 1, 1)},
+                                 'ticks': np.arange(-10, 1, 1)},
                     variable_range=[-10, 1],
                     ax=ax)
         (summa_df['scalarSnowDepth']).plot(color='k',
-                                        linewidth=2,
-                                        ax=ax,
-                                        label='SUMMA Modeled Snow Depth')
+                                           linewidth=2,
+                                           ax=ax,
+                                           label='SUMMA Modeled Snow Depth')
         snow_depth_obs.plot(color='red',
                             ls='--',
                             linewidth=2,
@@ -265,7 +267,7 @@ def produce_density_depth_fig(summa_df, snotel_df, name, plot_snow=True):
     Returns:
     - Figure of density of each snow layer
     """
-        # check that hru, time, and ifcToto are present
+    # check that hru, time, and ifcToto are present
     if not all(val in list(summa_df.dims) for val in ['time', 'ifcToto', 'hru']):
         raise ValueError('DataArray is missing dimension. Check for hru, time, and ifcToto.')
     else:
@@ -279,7 +281,7 @@ def produce_density_depth_fig(summa_df, snotel_df, name, plot_snow=True):
         min_time = depth.time.values.min()
         # make sure mintime is a datetime object
         try:
-            min_time = pd.to_datetime(min_time) 
+            min_time = pd.to_datetime(min_time)
         except:
             raise ValueError('min_time is not a datetime object. Check input data.')
         # get observed snow depth
@@ -291,13 +293,13 @@ def produce_density_depth_fig(summa_df, snotel_df, name, plot_snow=True):
                     plot_soil=False,
                     plot_snow=plot_snow,
                     cbar_kwargs={'label': 'Density (kg/m$^3$)',
-                                'ticks': np.arange(100, 400, 30)},
+                                 'ticks': np.arange(100, 400, 30)},
                     variable_range=[100, 400],
                     ax=ax)
         (summa_df['scalarSnowDepth']).plot(color='k',
-                                        linewidth=2,
-                                        ax=ax,
-                                        label='SUMMA Modeled Snow Depth')
+                                           linewidth=2,
+                                           ax=ax,
+                                           label='SUMMA Modeled Snow Depth')
         snow_depth_obs.plot(color='red',
                             ls='--',
                             linewidth=2,
@@ -331,10 +333,10 @@ def produce_liquid_water_depth_fig(summa_df, snotel_df, name, plot_snow=True):
         min_time = depth.time.values.min()
         # make sure mintime is a datetime object
         try:
-            min_time = pd.to_datetime(min_time) 
+            min_time = pd.to_datetime(min_time)
         except:
             raise ValueError('min_time is not a datetime object. Check input data.')
-        
+
         # get observed snow depth
         snow_depth_obs = get_snotel_depth(snotel_df, min_time)
 
@@ -344,12 +346,12 @@ def produce_liquid_water_depth_fig(summa_df, snotel_df, name, plot_snow=True):
                     plot_soil=False,
                     plot_snow=plot_snow,
                     cbar_kwargs={'label': 'Liquid Water Content (kg/m$^3$)',
-                                'ticks': np.arange(0, 100, 10)},
+                                 'ticks': np.arange(0, 100, 10)},
                     variable_range=[0, 100], ax=ax)
         (summa_df['scalarSnowDepth']).plot(color='k',
-                                        linewidth=2,
-                                        ax=ax,
-                                        label='SUMMA Modeled Snow Depth')
+                                           linewidth=2,
+                                           ax=ax,
+                                           label='SUMMA Modeled Snow Depth')
         snow_depth_obs.plot(color='red',
                             ls='--',
                             linewidth=2,
