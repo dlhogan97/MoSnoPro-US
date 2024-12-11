@@ -1,9 +1,10 @@
 import pytest
-from mosnopro_us.data_manager import *
+from src.mosnopro_us.data_manager import *
 import pandas as pd
 import xarray as xr
 import streamlit as st
 import os
+import unittest
 
 # Makes sure we get access to both the model data and the observations. 
 def test_xarray_db_connection():
@@ -11,11 +12,11 @@ def test_xarray_db_connection():
     site="Paradise"
 
     # if secrets are available, use the dropbox file path
-    if os.path.exists('../../.streamlit/secrets.toml'):
+    if os.path.exists('~/../../.streamlit/secrets.toml'):
         db_xr_file = f"/Apps/push-and-pull-pysumma/output/_{site}_timestep.nc"  # Path to the xarray file in Dropbox
         ds = load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
     else:
-        db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
+        db_xr_file = f"~/../../../data/example_data/output/_{site}_timestep.nc"
         ds = load_xarray_file_from_examples(db_xr_file)
 
     # Test if the returned value from this function is an xarray dataset
@@ -23,16 +24,17 @@ def test_xarray_db_connection():
         assert isinstance(ds, xr.Dataset)
         print("Test passed for xarray!")
     except:
-        TypeError("Model output dataset was not loaded correctly.")
+        # make sure a ValueError is raised
+        unittest.TestCase.assertRaises(ValueError, load_xarray_file_from_examples, db_xr_file)
 
 def test_pandas_db_connection():
     # example site to test
     site="Paradise"
-    if os.path.exists('../../.streamlit/secrets.toml'):
+    if os.path.exists('../../../.streamlit/secrets.toml'):
         db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
         df = load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
     else:
-        db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
+        db_pd_file = f"~/../../../data/example_data/snotel_csvs/{site}.csv"
         df = load_pandas_file_from_examples(db_pd_file)
 
     # Test if the returned value from this function is a pandas dataframe
@@ -45,19 +47,19 @@ def test_pandas_db_connection():
 # Makes sure the secrets are available if db_credentials are available.
 def test_secrets():
 # Test if the secrets are available
-    if os.path.exists('../../.streamlit/secrets.toml'):
+    if os.path.exists('~/../../../.streamlit/secrets.toml'):
         try:
             assert st.secrets.db_credentials
             print("Test passed for secrets!")
         except:
-            FileNotFoundError("Secrets are not available. Reach out to authors for credentials.")
+            FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
     else:
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
 
 # Dropbox server is down or not avaiable. 
 def test_dropbox_response():
     import dropbox
-    if os.path.exists('../../.streamlit/secrets.toml'):
+    if os.path.exists('~/../../../.streamlit/secrets.toml'):
         token = st.secrets.db_credentials.refresh_token
         app_key = st.secrets.db_credentials.APP_KEY
         app_secret = st.secrets.db_credentials.APP_SECRET
@@ -119,8 +121,8 @@ def test_missing_time_dimension():
 # test one of the example files to make sure it will work
 def test_example_dimension():
     site = "Paradise"
-    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"output/_{site}_timestep.nc"
+    db_pd_file = f"snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
     # test the dimesion match
@@ -131,8 +133,8 @@ def test_example_dimension():
 # test that the max SNOWDEPTH is less than 20 meters
 def test_max_values():
     site = "Paradise"
-    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"output/_{site}_timestep.nc"
+    db_pd_file = f"snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
     
@@ -141,8 +143,8 @@ def test_max_values():
 def test_min_values():
     import datetime as dt
     site = "Wells_Creek"
-    db_xr_file = f"../../../data/example_data/output/_{site}_timestep.nc"
-    db_pd_file = f"../../../data/example_data/snotel_csvs/{site}.csv"
+    db_xr_file = f"output/_{site}_timestep.nc"
+    db_pd_file = f"snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
 

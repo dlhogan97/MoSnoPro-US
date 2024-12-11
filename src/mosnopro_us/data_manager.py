@@ -168,9 +168,12 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
     Returns:
         xarray.Dataset: Loaded dataset.
     """
-    token = st.secrets.db_credentials.refresh_token
-    app_key = st.secrets.db_credentials.APP_KEY
-    app_secret = st.secrets.db_credentials.APP_SECRET
+    try:
+        token = st.secrets.db_credentials.refresh_token
+        app_key = st.secrets.db_credentials.APP_KEY
+        app_secret = st.secrets.db_credentials.APP_SECRET
+    except:
+        raise FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
     try:
         # Initialize Dropbox client
         dbx = dropbox.Dropbox(app_key=app_key,
@@ -184,8 +187,8 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
         # Load the file content as an xarray dataset
         dataset = xr.open_dataset(file_content)
         return dataset
-    except Exception as e:
-        raise RuntimeError(f"Failed to read file from Dropbox: {e}")
+    except:
+        raise ConnectionRefusedError("Dropbox response was not loaded correctly.")
 
 def load_xarray_file_from_examples(file_name):
     """

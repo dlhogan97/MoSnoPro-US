@@ -4,7 +4,7 @@ This module contains unit tests for the app.py functionality in the Mosnopro US 
 
 from unittest.mock import patch, MagicMock
 import pytest
-from mosnopro_us import data_manager
+from src.mosnopro_us import data_manager
 
 def test_site_selection_transfer(monkeypatch):
     """
@@ -19,13 +19,13 @@ def test_site_selection_transfer(monkeypatch):
         }
     }
     # Patch the 'st_folium' function to return the mock data
-    monkeypatch.setattr("mosnopro_us.app.st_folium", MagicMock(return_value=mock_map_data))
+    monkeypatch.setattr("src.app.st_folium", MagicMock(return_value=mock_map_data))
 
     # Test if the corect site is processed
-    with patch("mosnopro_us.app.st.sidebar.radio", return_value="Interactive Map"), \
-        patch("mosnopro_us.app.st.write") as mock_write, \
-        patch("mosnopro_us.data_manager.load_pandas_df_from_dropbox") as mock_load_csv, \
-        patch("mosnopro_us.data_manager.load_xarray_file_from_dropbox") as mock_load_nc:
+    with patch("src.app.st.sidebar.radio", return_value="Interactive Map"), \
+        patch("src.app.st.write") as mock_write, \
+        patch("src.mosnopro_us.data_manager.load_pandas_df_from_dropbox") as mock_load_csv, \
+        patch("src.mosnopro_us.data_manager.load_xarray_file_from_dropbox") as mock_load_nc:
 
         mock_load_csv.return_value = MagicMock()
         mock_load_nc.return_value = MagicMock()
@@ -49,7 +49,7 @@ def test_timeout_handling(monkeypatch):
         raise TimeoutError("Simulated timeout")
 
     monkeypatch.setattr(
-        "mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
+        "src.mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
         mock_load_from_dropbox
     )
 
@@ -71,7 +71,7 @@ def test_secrets_availability(monkeypatch):
             "refresh_token": "dummy_token"
         }
     }
-    monkeypatch.setattr("mosnopro_us.app.st.secrets", mock_secrets)
+    monkeypatch.setattr("src.app.st.secrets", mock_secrets)
 
     #Validate secrets
     secrets = mock_secrets["db_credentials"]
@@ -88,7 +88,7 @@ def test_dropbox_sever_down(monkeypatch):
         raise ConnectionError("Dropbox server down")
 
     monkeypatch.setattr(
-        "mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
+        "src.mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
         mock_load_from_dropbox
     )
 

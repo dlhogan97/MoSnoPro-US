@@ -3,7 +3,7 @@ This is the main application file for MoSnoPro-US Dashboard.
 It provides an interactive interface for visualizing snowpack properties.
 """
 import logging
-from mosnopro_us import data_manager, plotting, map_builder
+from src.mosnopro_us import data_manager, plotting, map_builder
 from streamlit_folium import st_folium
 import streamlit as st
 import pandas as pd
