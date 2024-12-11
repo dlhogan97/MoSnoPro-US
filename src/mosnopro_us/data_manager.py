@@ -91,9 +91,12 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
     Returns:
         pandas.DataFrame: Loaded dataset.
     """
-    token = st.secrets.db_credentials.refresh_token
-    app_key = st.secrets.db_credentials.APP_KEY
-    app_secret = st.secrets.db_credentials.APP_SECRET
+    try:
+        token = st.secrets.db_credentials.refresh_token
+        app_key = st.secrets.db_credentials.APP_KEY
+        app_secret = st.secrets.db_credentials.APP_SECRET
+    except:
+        raise FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
     try:
         # Initialize Dropbox client
         dbx = dropbox.Dropbox(app_key=app_key,
@@ -110,8 +113,8 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_localize(None)
         return df
-    except Exception as e:
-        raise RuntimeError(f"Failed to read file from Dropbox: {e}")
+    except:
+        raise ConnectionRefusedError("Dropbox response was not loaded correctly. Check connection and credentials.")
 
 
 def load_pandas_file_from_examples(file_name):
@@ -172,7 +175,7 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
         dataset = xr.open_dataset(file_content)
         return dataset
     except:
-        raise ConnectionRefusedError("Dropbox response was not loaded correctly.")
+        raise ConnectionRefusedError("Dropbox response was not loaded correctly. Check connection and credentials.")
 
 def load_xarray_file_from_examples(file_name):
     """

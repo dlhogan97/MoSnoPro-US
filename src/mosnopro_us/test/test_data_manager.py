@@ -65,8 +65,9 @@ def test_secrets():
             assert st.secrets.db_credentials
             print("Test passed for secrets!")
         except:
-            FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
+            assert pytest.raises(FileNotFoundError)
     else:
+        assert pytest.raises(FileNotFoundError)
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
 
 def test_dropbox_response():
@@ -88,9 +89,9 @@ def test_dropbox_response():
             assert isinstance(dbx.users_get_current_account(), dict)
             print("Test passed for dropbox response!")
         except:
-            ConnectionRefusedError("Dropbox response was not loaded correctly.")
+            assert pytest.raises(ConnectionRefusedError)
     else:
-        print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
+        assert pytest.raises(FileNotFoundError)
 
 
 # Testing validity of the data. Run these tests on example data

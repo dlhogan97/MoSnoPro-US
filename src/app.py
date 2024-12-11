@@ -54,7 +54,7 @@ section = st.sidebar.radio("Go to", ["Overview", "Interactive Map"])
 
 
 # Helper Functions
-def load_and_filter_data(site, time_slice):
+def load_and_filter_data(site, time_slice=None):
     """
     Load and filter data for the selected SNOTEL site.
     Args:
@@ -63,6 +63,8 @@ def load_and_filter_data(site, time_slice):
     Returns:
         tuple: Filtered SUMMA and SNOTEL data.
     """
+    if ' ' in site:
+        site = str.replace(site, " ", "_")
      # Path to the xarray file in Dropbox
     db_xr_file = f"{SUMMA_PATH}_{site}_timestep.nc"
     # Path to csv in Dropbox
@@ -74,10 +76,13 @@ def load_and_filter_data(site, time_slice):
     else:
         snotel_df = data_manager.load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
         summa_ds = data_manager.load_xarray_file_from_dropbox(dropbox_file_path=db_xr_file)
-
-    filtered_summa_data = summa_ds.sel(time=time_slice)
-    filtered_snotel_data = snotel_df.loc[time_slice]
-
+    if time_slice is not None:
+        filtered_summa_data = summa_ds.sel(time=time_slice)
+        filtered_snotel_data = snotel_df.loc[time_slice]
+    else:
+        filtered_summa_data = summa_ds
+        filtered_snotel_data = snotel_df
+    print("Data loaded and filtered successfully.")
     return filtered_summa_data, filtered_snotel_data
 
 
