@@ -18,7 +18,7 @@ The model we will be using is called SUMMA (Structure for Unifying Multiple Mode
 The dataset will be from NRCS (National Resource Conservation Service) SNOTEL (Snow Telemetry) weather stations throughout Washington. We will use a tool called metloom to efficiently access this data. See documentation [here](https://metloom.readthedocs.io/en/latest/). A map of all the sites in the Western United States and Canada is available [here](https://nwcc-apps.sc.egov.usda.gov/imap/).
 
 
-## User Profiles
+## User Stories
 
 ### 1. Data Analyst
 
@@ -147,7 +147,8 @@ The dataset will be from NRCS (National Resource Conservation Service) SNOTEL (S
 **Ellen** organizes the union of ski resort workers at Stevens Pass, a supermajority of which have authorized a strike. They need to identify a high-impact strike time, which should coincide with the busiest weekend of the snow sport season. They need to proxy that traffic data using data from a year ago in conjunction with weather data so they don't actively endanger guests when the snowpack isn't safe. Ellen has a background in data science and is familiar with interpreting graphs that visualize longitudinal data. Ellen would also like to easily share the source data with other organizers who may be more familiar with the subject area. 
 
 
-# User Summaries
+
+# User Profile Summaries
 
 | **User**                              | **Knowledge**                                                                                             | **Needs**                                                                                         | **Information Users Want**                                                                             | **Use Cases**                                                                                                                                           |
 |----------------------------------------|-----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
