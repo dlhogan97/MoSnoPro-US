@@ -11,10 +11,11 @@ MoSnoPro-US stands for Modeling Snow Properties - Using SUMMA, a modeling and vi
 ### **Getting started:**
 This is all executed via the command line.
 1. Clone the repo using `git clone [insert SSH link]`.
-2. Set up the environment using `conda env create -f environment.yml`.
-3. Initialization of the project will be built-in to the `pyproject.toml` file. No explicit step needed to execute here.
-4. To run the Streamlit app, use `streamlit run src/app.py`.
-5. Happy mapping! _For users interested in building on top of this project, please contact the authors to access raw SUMMA data._
+2. Set MoSnoPro-US/ as your working directory.
+3. Set up the environment using `conda env create -f environment.yml`.
+4. Initialization of the project will be built-in to the `pyproject.toml` file. No explicit step needed to execute here.
+5. To run the Streamlit app, use `streamlit run src/app.py`.
+6. Happy mapping! _For users interested in building on top of this project, please contact the authors to access raw SUMMA data._
 
 ### **Team:**
 Danny Hogan, Civil and Environmental Engineering (lead)  
