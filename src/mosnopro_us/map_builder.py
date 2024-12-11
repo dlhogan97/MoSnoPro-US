@@ -11,13 +11,11 @@ def plot_map():
         - SNOTEL sites are displayed as points.
             - Each point includes tooltips and popups that display the SNOTEL site name, ID, and elevation.
         - WA state boundary is displayed as a blue overlay.
-
-    Parameters:
-    - Output from load_snotel_points(): GeoJSON.
-    - Output from load_washington_boundary(): GeoJSON.
-
+    Args:
+        Output from load_snotel_points(): GeoJSON.
+        Output from load_washington_boundary(): GeoJSON.
     Returns:
-    - folium.Map: A folium map object with added layers.
+        folium.Map: A folium map object with added layers.
     """
     # Load SNOTEL points and filter for specific sites
     snotels = load_snotel_points()

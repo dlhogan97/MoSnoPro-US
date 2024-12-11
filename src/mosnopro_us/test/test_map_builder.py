@@ -19,6 +19,7 @@ def snotel_data():
 def test_map_has_correct_sites(map_object):
     """
     Test that the generated map contains GeoJson layers and SNOTEL tooltips.
+    [quality check test]
     """
     # Check for GeoJson layers
     geojson_layers = [
@@ -40,6 +41,7 @@ def test_map_has_correct_sites(map_object):
 def test_altitude_values(snotel_data):
     """
     Test that the altitude (alt) values are valid.
+    [pattern test (evaluate how the conversions were computed)]
     """
     # Ensure all altitudes are greater than 0 and not excessively high
     altitudes = snotel_data['geometry'].z / 3.28  # Convert feet to meters
