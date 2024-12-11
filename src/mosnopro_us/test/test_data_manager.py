@@ -7,8 +7,11 @@ import os
 import unittest
 
 
-# Makes sure we get access to both the model data and the observations.
 def test_xarray_db_connection():
+    """
+    Makes sure we get access to both the SUMMA model data and the observations.
+    [One-shot test]
+    """
     # example site to test
     site = "Paradise"
 
@@ -30,6 +33,10 @@ def test_xarray_db_connection():
 
 
 def test_pandas_db_connection():
+    """
+    Makes sure csv was correctly converted to pandas df
+    [one-shot test]
+    """
     # example site to test
     site = "Paradise"
     if os.path.exists('../../../.streamlit/secrets.toml'):
@@ -47,8 +54,11 @@ def test_pandas_db_connection():
         TypeError("SNOTEL data was not loaded correctly.")
 
 
-# Makes sure the secrets are available if db_credentials are available.
 def test_secrets():
+    """
+    Makes sure the secrets are available if db_credentials are available.
+    [one-shot test]
+    """
     # Test if the secrets are available
     if os.path.exists('~/../../../.streamlit/secrets.toml'):
         try:
@@ -59,9 +69,11 @@ def test_secrets():
     else:
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
 
-
-# Dropbox server is down or not avaiable.
 def test_dropbox_response():
+    """
+    Case when Dropbox server is down or not available.
+    [edge test]
+    """
     import dropbox
     if os.path.exists('~/../../../.streamlit/secrets.toml'):
         token = st.secrets.db_credentials.refresh_token
@@ -82,6 +94,7 @@ def test_dropbox_response():
 
 
 # Testing validity of the data. Run these tests on example data
+# Suite of pattern tests
 def test_lengths_match():
     df = pd.DataFrame({
         'value': [1, 2, 3, 4, 5],
@@ -126,7 +139,6 @@ def test_missing_time_dimension():
     with pytest.raises(KeyError):
         check_lengths_match(df, ds)
 
-
 # test one of the example files to make sure it will work
 def test_example_dimension():
     site = "Paradise"
@@ -138,8 +150,11 @@ def test_example_dimension():
     assert check_lengths_match(df, ds)
 
 
-# test for a site that doesn't exist
 def test_non_existent_site():
+    """
+    Case when a non-existent datafile is referenced.
+    [edge test]
+    """
     site = "NonExistentSite"
     db_xr_file = f"output/_{site}_timestep.nc"
     db_pd_file = f"snotel_csvs/{site}.csv"
@@ -149,10 +164,12 @@ def test_non_existent_site():
     with pytest.raises(FileNotFoundError):
         load_pandas_file_from_examples(db_pd_file)
 
-# Test if the data is valid by looking at extremes in the observed data
 
-# test that the max SNOWDEPTH is less than 20 meters
 def test_max_values():
+    """
+    Checks if data are valid by looking at extremes (max depth is <20 meters) in observed data.
+    [edge test]
+    """
     site = "Paradise"
     db_xr_file = f"output/_{site}_timestep.nc"
     db_pd_file = f"snotel_csvs/{site}.csv"
@@ -163,6 +180,10 @@ def test_max_values():
 
 
 def test_min_values():
+    """
+    Checks if data are valid (if they have successfully be processed to be close to 0 m).
+    [edge test]
+    """
     import datetime as dt
     site = "Wells_Creek"
     db_xr_file = f"output/_{site}_timestep.nc"
