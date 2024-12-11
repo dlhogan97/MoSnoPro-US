@@ -25,7 +25,7 @@ st.set_page_config(
 )
 # if a .streamlit/secrets file exists, then we'll pull data from there
 # otherwise, we'll use the example data
-if st.secrets:
+if os.path.exists('../.streamlit/secrets.toml'):
     # Constants
     SNOTEL_PATH = "/Apps/push-and-pull-pysumma/snotel_csvs/"
     SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"

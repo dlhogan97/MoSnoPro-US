@@ -141,20 +141,22 @@ def load_pandas_file_from_examples(file_name):
     - ValueError: If the file cannot be loaded or doesn't exist.
 
     """
-    try:
-        # Dynamically construct the file path relative to this script's location
-        base_dir = os.path.dirname(__file__)  # Directory of the current script
-        data_dir = os.path.join(base_dir, "../../data/example_data/")  # Subdirectory containing data files
-        file_path = os.path.join(data_dir, file_name)
+    # Dynamically construct the file path relative to this script's location
+    base_dir = os.path.dirname(__file__)  # Directory of the current script
+    data_dir = os.path.join(base_dir, "../../data/example_data/")  # Subdirectory containing data files
+    file_path = os.path.join(data_dir, file_name)
 
+    if os.path.exists(file_path):
+        # Load the xarray file using xarray
         # Load the CSV file using pandas
         df = pd.read_csv(file_path, index_col=0,
-                         parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
+                        parse_dates=True, date_format='%Y-%m-%d %H:%M:%S')
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_localize(None)
         return df
-    except Exception as e:
-        raise ValueError(f"Error loading CSV file '{file_name}': {e}")
+    else:
+        raise FileNotFoundError(f"{file_path} not found. Check the site name or path.")
+
 
 def load_xarray_file_from_dropbox(dropbox_file_path):
     """
@@ -204,17 +206,17 @@ def load_xarray_file_from_examples(file_name):
     - ValueError: If the file cannot be loaded or doesn't exist.
 
     """
-    try:
-        # Dynamically construct the file path relative to this script's location
-        base_dir = os.path.dirname(__file__)  # Directory of the current script
-        data_dir = os.path.join(base_dir, "../../data/example_data/")  # Subdirectory containing data files
-        file_path = os.path.join(data_dir, file_name)
+    # Dynamically construct the file path relative to this script's location
+    base_dir = os.path.dirname(__file__)  # Directory of the current script
+    data_dir = os.path.join(base_dir, "../../data/example_data/")  # Subdirectory containing data files
+    file_path = os.path.join(data_dir, file_name)
 
+    if os.path.exists(file_path):
         # Load the xarray file using xarray
         ds = xr.open_dataset(file_path)
         return ds 
-    except Exception as e:
-        raise ValueError(f"Error loading xarray file '{file_name}': {e}")
+    else:
+        raise FileNotFoundError(f"{file_path} not found. Check the site name or path.")
     
 def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=2148):
     """
