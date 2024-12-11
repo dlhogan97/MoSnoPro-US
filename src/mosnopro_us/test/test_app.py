@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from mosnopro_us import data_manager
 
+
 def test_site_selection_transfer(monkeypatch):
     """
     Test if the correct data is transferred when a site is clicked.
@@ -38,7 +39,8 @@ def test_site_selection_transfer(monkeypatch):
 
         mock_write.assert_any_call(
             f"Producing figure for {site_name_transformed}... Please wait..."
-        )   
+        ) 
+
 
 def test_timeout_handling(monkeypatch):
     """
@@ -49,7 +51,7 @@ def test_timeout_handling(monkeypatch):
         raise TimeoutError("Simulated timeout")
 
     monkeypatch.setattr(
-        "mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
+        "mosnopro_us.data_manager.load_xarray_file_from_dropbox",
         mock_load_from_dropbox
     )
 
@@ -58,6 +60,7 @@ def test_timeout_handling(monkeypatch):
         data_manager.load_xarray_file_from_dropbox(
             "/dummy/path.nc"
         )
+
 
 def test_secrets_availability(monkeypatch):
     """
@@ -73,11 +76,12 @@ def test_secrets_availability(monkeypatch):
     }
     monkeypatch.setattr("app.st.secrets", mock_secrets)
 
-    #Validate secrets
+    # Validate secrets
     secrets = mock_secrets["db_credentials"]
     assert "APP_KEY" in secrets, "APP_KEY not found in secrets"
     assert "APP_SECRET" in secrets, "APP_SECRET not found in secrets"
     assert "refresh_token" in secrets, "refresh_token not found in secrets"
+
 
 def test_dropbox_sever_down(monkeypatch):
     """
@@ -88,7 +92,7 @@ def test_dropbox_sever_down(monkeypatch):
         raise ConnectionError("Dropbox server down")
 
     monkeypatch.setattr(
-        "mosnopro_us.data_manager.load_xarray_file_from_dropbox", 
+        "mosnopro_us.data_manager.load_xarray_file_from_dropbox",
         mock_load_from_dropbox
     )
 

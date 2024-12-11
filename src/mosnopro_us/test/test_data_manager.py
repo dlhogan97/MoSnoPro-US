@@ -6,10 +6,11 @@ import streamlit as st
 import os
 import unittest
 
-# Makes sure we get access to both the model data and the observations. 
+
+# Makes sure we get access to both the model data and the observations.
 def test_xarray_db_connection():
     # example site to test
-    site="Paradise"
+    site = "Paradise"
 
     # if secrets are available, use the dropbox file path
     if os.path.exists('~/../../.streamlit/secrets.toml'):
@@ -27,11 +28,12 @@ def test_xarray_db_connection():
         # make sure a ValueError is raised
         unittest.TestCase.assertRaises(ValueError, load_xarray_file_from_examples, db_xr_file)
 
+
 def test_pandas_db_connection():
     # example site to test
-    site="Paradise"
+    site = "Paradise"
     if os.path.exists('../../../.streamlit/secrets.toml'):
-        db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv" # Path to csv in Dropbox
+        db_pd_file = f"/Apps/push-and-pull-pysumma/snotel_csvs/{site}.csv"  # Path to csv in Dropbox
         df = load_pandas_df_from_dropbox(dropbox_file_path=db_pd_file)
     else:
         db_pd_file = f"snotel_csvs/{site}.csv"
@@ -44,9 +46,10 @@ def test_pandas_db_connection():
     except:
         TypeError("SNOTEL data was not loaded correctly.")
 
+
 # Makes sure the secrets are available if db_credentials are available.
 def test_secrets():
-# Test if the secrets are available
+    # Test if the secrets are available
     if os.path.exists('~/../../../.streamlit/secrets.toml'):
         try:
             assert st.secrets.db_credentials
@@ -56,7 +59,8 @@ def test_secrets():
     else:
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
 
-# Dropbox server is down or not avaiable. 
+
+# Dropbox server is down or not avaiable.
 def test_dropbox_response():
     import dropbox
     if os.path.exists('~/../../../.streamlit/secrets.toml'):
@@ -66,15 +70,16 @@ def test_dropbox_response():
         try:
             # Initialize Dropbox client
             dbx = dropbox.Dropbox(app_key=app_key,
-                                app_secret=app_secret,
-                                oauth2_refresh_token=token,
-                                max_retries_on_error=4)
+                                  app_secret=app_secret,
+                                  oauth2_refresh_token=token,
+                                  max_retries_on_error=4)
             assert isinstance(dbx.users_get_current_account(), dict)
             print("Test passed for dropbox response!")
         except:
             ConnectionRefusedError("Dropbox response was not loaded correctly.")
     else:
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
+
 
 # Testing validity of the data. Run these tests on example data
 def test_lengths_match():
@@ -88,6 +93,7 @@ def test_lengths_match():
 
     assert check_lengths_match(df, ds, extra_length=2) is True
 
+
 def test_lengths_do_not_match():
     df = pd.DataFrame({
         'value': [1, 2],
@@ -99,12 +105,14 @@ def test_lengths_do_not_match():
 
     assert check_lengths_match(df, ds) is False
 
+
 def test_empty_dataframe():
     df = pd.DataFrame(columns=['value'])
     ds = xr.Dataset({
         'value': (['time'], []),
     }, coords={'time': []})
     assert check_lengths_match(df, ds) is True
+
 
 def test_missing_time_dimension():
     df = pd.DataFrame({
@@ -118,6 +126,7 @@ def test_missing_time_dimension():
     with pytest.raises(KeyError):
         check_lengths_match(df, ds)
 
+
 # test one of the example files to make sure it will work
 def test_example_dimension():
     site = "Paradise"
@@ -126,7 +135,8 @@ def test_example_dimension():
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
     # test the dimesion match
-    assert check_lengths_match(df, ds) 
+    assert check_lengths_match(df, ds)
+
 
 # test for a site that doesn't exist
 def test_non_existent_site():
@@ -148,8 +158,9 @@ def test_max_values():
     db_pd_file = f"snotel_csvs/{site}.csv"
     ds = load_xarray_file_from_examples(db_xr_file)
     df = load_pandas_file_from_examples(db_pd_file)
-    
+
     assert (df['SNOWDEPTH'].max() < 20*100) & (ds['scalarSnowDepth'].max() < 20)
+
 
 def test_min_values():
     import datetime as dt
