@@ -12,16 +12,12 @@ import os
 def load_geojson(file_name):
     """
     Dynamically load a GeoJSON file from the `data` directory.
-
-    Parameters:
-    - file_name (str): Name of the GeoJSON file to load.
-
+    Args:
+        file_name (str): Name of the GeoJSON file to load.
     Returns:
-    - GeoDataFrame: A GeoPandas DataFrame containing the data from the GeoJSON file.
-
+        GeoDataFrame: A GeoPandas DataFrame containing the data from the GeoJSON file.
     Raises:
-    - ValueError: If the file cannot be loaded or doesn't exist.
-
+        ValueError: If the file cannot be loaded or doesn't exist.
     """
     try:
         # Dynamically construct the file path relative to this script's location
@@ -39,12 +35,10 @@ def load_snotel_points():
     """
     Reads and returns geospatial data for SNOTEL points (Snow Telemetry monitoring stations)
     in Washington state from a GeoJSON file.
-
-    Parameters:
-    - "WA_snotel_points.geojson" pre-set data, outputted from load_geojson function
-
+    Args:
+        "WA_snotel_points.geojson" pre-set data, outputted from load_geojson function
     Returns:
-    - GeoJSON object/dict containing SNOTEL point data.
+        GeoJSON object/dict containing SNOTEL point data.
     """
     return load_geojson("WA_snotel_points.geojson")
 
@@ -52,12 +46,10 @@ def load_snotel_points():
 def load_washington_boundary():
     """
     Reads and returns the geospatial boundary data for Washington state.
-
-    Parameters:
-    - Outputs from load_geojson function
-
+    Args:
+        Outputs from load_geojson function
     Returns:
-    - GeoJSON object/dict containing boundary data for Washington state
+        GeoJSON object/dict containing boundary data for Washington state
     """
     return load_geojson("washington.geojson")
 
@@ -65,15 +57,12 @@ def load_washington_boundary():
 def load_snow_depth_data(file_path):
     """
     Reads snow depth data from a CSV file. Parses "Date" column as datetime objects.
-
-    Parameters:
-    - file_name (str): Name of the CSV file to load.
-
+    Args:
+        file_name (str): Name of the CSV file to load.
     Returns:
-    - DataFrame containing the datatime objects.
-
+        DataFrame containing the datatime objects.
     Raises:
-    - ValueError: If the file cannot be loaded or doesn't exist.
+        ValueError: If the file cannot be loaded or doesn't exist.
     """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
@@ -84,12 +73,10 @@ def load_snow_depth_data(file_path):
 def summarize_snotel_points(gdf):
     """
     Extracts key attributes ("demographics") from SNOTEL sites.
-
-    Parameters:
-    - GeoDataFrame: containing SNOTEL point data with all columns
-
+    Args:
+        GeoDataFrame: containing SNOTEL point data with all columns
     Returns:
-    - GeoDataFrame: containing only Name, Elevation, Latitude, Longitude columns
+        GeoDataFrame: containing only Name, Elevation, Latitude, Longitude columns
     """
     return gdf[["Name", "Elevation", "Latitude", "Longitude"]]
 
@@ -97,12 +84,10 @@ def summarize_snotel_points(gdf):
 def load_pandas_df_from_dropbox(dropbox_file_path):
     """
     Reads an csv file directly from Dropbox into memory.
-
-    Parameters:
+    Args:
         dropbox_file_path (str): Path to the file in Dropbox
         (e.g., '/folder/file.nc').
         access_token (str): Dropbox API access token.
-
     Returns:
         pandas.DataFrame: Loaded dataset.
     """
@@ -132,15 +117,12 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
 def load_pandas_file_from_examples(file_name):
     """
     Loads a CSV file from the `examples` directory.
-
-    Parameters:
-    - file_name (str): Name of the CSV file to load.
-
+    Args:
+        file_name (str): Name of the CSV file to load.
     Returns:
-    - pd.DataFrame: A pandas DataFrame containing the data from the CSV file.
-
+        pd.DataFrame: A pandas DataFrame containing the data from the CSV file.
     Raises:
-    - ValueError: If the file cannot be loaded or doesn't exist.
+        ValueError: If the file cannot be loaded or doesn't exist.
 
     """
     # Dynamically construct the file path relative to this script's location
@@ -163,12 +145,10 @@ def load_pandas_file_from_examples(file_name):
 def load_xarray_file_from_dropbox(dropbox_file_path):
     """
     Reads an xarray file directly from Dropbox into memory.
-
-    Parameters:
+    Args:
         dropbox_file_path (str): Path to the file in Dropbox
         (e.g., '/folder/file.nc').
         access_token (str): Dropbox API access token.
-
     Returns:
         xarray.Dataset: Loaded dataset.
     """
@@ -197,16 +177,12 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
 def load_xarray_file_from_examples(file_name):
     """
     Loads an xarray file from the `examples` directory.
-
-    Parameters:
-    - file_name (str): Name of the xarray file to load.
-
+    Args:
+        file_name (str): Name of the xarray file to load.
     Returns:
-    - xr.Dataset: An xarray Dataset containing the data from the file.
-
+        xr.Dataset: An xarray Dataset containing the data from the file.
     Raises:
-    - ValueError: If the file cannot be loaded or doesn't exist.
-
+        ValueError: If the file cannot be loaded or doesn't exist.
     """
     # Dynamically construct the file path relative to this script's location
     base_dir = os.path.dirname(__file__)  # Directory of the current script
@@ -224,13 +200,11 @@ def load_xarray_file_from_examples(file_name):
 def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=2148):
     """
     Check if the length of the DataFrame index matches the length of the Dataset's time dimension.
-
-    Parameters:
+    Args:
         dataframe (pd.DataFrame): The dataframe to compare.
         dataset (xr.Dataset): The dataset to compare.
         time_dimension (str): The name of the time dimension in the dataset.
         extra_length (int): Number of timesteps that the dataframe has for runup that are greater than the model output
-
     Returns:
         bool: True if lengths match, False otherwise.
     """
@@ -248,12 +222,10 @@ def get_snotel_depth(df, min_time):
         values with large sudden changes (>25) with NaN to be interpolated linearly
         - Takes maximum snow depth daily
         - Converts from inches to meters
-
-    Parameters:
-    - df: SNOTEL dataframe with observation data
-
+    Args:
+        df: SNOTEL dataframe with observation data
     Returns:
-    - pandas.Series: time series of daily snow depth observations (meters)
+        pandas.Series: time series of daily snow depth observations (meters)
     """
     # make sure the snotel df is a datetime index
     if not isinstance(df.index, pd.DatetimeIndex):
