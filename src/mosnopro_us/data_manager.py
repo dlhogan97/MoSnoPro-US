@@ -26,7 +26,7 @@ def load_geojson(file_name):
 
         # Load the GeoJSON file using GeoPandas
         return gpd.read_file(file_path)
-    except Exception:
+    except Exception as e:
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
 
 
@@ -65,7 +65,7 @@ def load_snow_depth_data(file_path):
     """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
-    except Exception:
+    except Exception as e:
         raise ValueError(f"Error loading snow depth data : {e}")
 
 
