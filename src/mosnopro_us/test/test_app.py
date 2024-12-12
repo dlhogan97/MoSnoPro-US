@@ -24,22 +24,22 @@ def test_site_selection_transfer(monkeypatch):
 
     # Test if the corect site is processed
     with patch("app.st.sidebar.radio", return_value="Interactive Map"), \
-        patch("app.st.write") as mock_write, \
-        patch("mosnopro_us.data_manager.load_pandas_df_from_dropbox") as mock_load_csv, \
-        patch("mosnopro_us.data_manager.load_xarray_file_from_dropbox") as mock_load_nc:
+            patch("app.st.write") as mock_write, \
+            patch("mosnopro_us.data_manager.load_pandas_df_from_dropbox") as mock_load_csv, \
+            patch("mosnopro_us.data_manager.load_xarray_file_from_dropbox") as mock_load_nc:
 
-            mock_load_csv.return_value = MagicMock()
-            mock_load_nc.return_value = MagicMock()
+        mock_load_csv.return_value = MagicMock()
+        mock_load_nc.return_value = MagicMock()
 
-            # Stimulate site selection and the app logic
-            site_name = "Morse Lake"
-            site_name_transformed = site_name.replace(" ", "_")
+        # Stimulate site selection and the app logic
+        site_name = "Morse Lake"
+        site_name_transformed = site_name.replace(" ", "_")
 
-            mock_write(f"Producing figure for {site_name_transformed}... Please wait...")
+        mock_write(f"Producing figure for {site_name_transformed}... Please wait...")
 
-            mock_write.assert_any_call(
-                f"Producing figure for {site_name_transformed}... Please wait..."
-            ) 
+        mock_write.assert_any_call(
+            f"Producing figure for {site_name_transformed}... Please wait..."
+        )
 
 
 def test_timeout_handling(monkeypatch):
