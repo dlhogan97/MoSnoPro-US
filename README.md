@@ -23,7 +23,7 @@ This is all executed via the command line.
 
 ### **Team:**
 Danny Hogan, Civil and Environmental Engineering (lead)  
-Bow Sruangsung, Civil and Environmental Engineering  
+Bow Sruangsaeng Chaikasetsin, Civil and Environmental Engineering  
 Xinya Tang, iSchool  
 Jane Dai, School of Public Health  
 
