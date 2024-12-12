@@ -5,6 +5,7 @@ h5netcdf==1.4.1
 ipython==8.29.0
 ipywidgets==8.1.5
 jupyter==1.1.1
+matplotlib
 notebook==7.2.2
 numpy==1.26.4
 pandas==2.2.3
