@@ -65,7 +65,7 @@ def load_and_filter_data(site, time_slice=None):
     """
     if ' ' in site:
         site = str.replace(site, " ", "_")
-     # Path to the xarray file in Dropbox
+    # Path to the xarray file in Dropbox
     db_xr_file = f"{SUMMA_PATH}_{site}_timestep.nc"
     # Path to csv in Dropbox
     db_pd_file = f"{SNOTEL_PATH}{site}.csv"

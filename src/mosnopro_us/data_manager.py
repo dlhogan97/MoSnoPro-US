@@ -2,7 +2,6 @@ import geopandas as gpd
 import pandas as pd
 import xarray as xr
 import numpy as np
-import importlib.resources as pkg_resources
 import dropbox
 import io
 import streamlit as st
@@ -27,7 +26,7 @@ def load_geojson(file_name):
 
         # Load the GeoJSON file using GeoPandas
         return gpd.read_file(file_path)
-    except Exception as e:
+    except Exception:
         raise ValueError(f"Error loading GeoJSON file '{file_name}': {e}")
 
 
@@ -66,7 +65,7 @@ def load_snow_depth_data(file_path):
     """
     try:
         return pd.read_csv(file_path, parse_dates=["Date"])
-    except Exception as e:
+    except Exception:
         raise ValueError(f"Error loading snow depth data : {e}")
 
 
@@ -95,7 +94,7 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
         token = st.secrets.db_credentials.refresh_token
         app_key = st.secrets.db_credentials.APP_KEY
         app_secret = st.secrets.db_credentials.APP_SECRET
-    except:
+    except Exception:
         raise FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
     try:
         # Initialize Dropbox client
@@ -113,7 +112,7 @@ def load_pandas_df_from_dropbox(dropbox_file_path):
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_localize(None)
         return df
-    except:
+    except Exception:
         raise ConnectionRefusedError("Dropbox response was not loaded correctly. Check connection and credentials.")
 
 
@@ -159,7 +158,7 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
         token = st.secrets.db_credentials.refresh_token
         app_key = st.secrets.db_credentials.APP_KEY
         app_secret = st.secrets.db_credentials.APP_SECRET
-    except:
+    except Exception:
         raise FileNotFoundError("Secrets are not correct. Reach out to authors for credentials.")
     try:
         # Initialize Dropbox client
@@ -174,8 +173,9 @@ def load_xarray_file_from_dropbox(dropbox_file_path):
         # Load the file content as an xarray dataset
         dataset = xr.open_dataset(file_content)
         return dataset
-    except:
+    except Exception:
         raise ConnectionRefusedError("Dropbox response was not loaded correctly. Check connection and credentials.")
+
 
 def load_xarray_file_from_examples(file_name):
     """
@@ -218,7 +218,7 @@ def check_lengths_match(dataframe, dataset, time_dimension='time', extra_length=
 
 def get_snotel_depth(df, min_time):
     """
-    This function processes daily snow depth observations from SNOTEL sites and returns it as a pandas series. 
+    This function processes daily snow depth observations from SNOTEL sites and returns it as a pandas series.
     It performs the following steps:
         - Filters data to include records from `min_time` onwards (specified by user)
         - Cleans out-of-range data by replacing negative values with 0 and

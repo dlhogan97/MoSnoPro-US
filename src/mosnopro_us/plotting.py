@@ -282,7 +282,7 @@ def produce_density_depth_fig(summa_df, snotel_df, name, plot_snow=True):
         # make sure mintime is a datetime object
         try:
             min_time = pd.to_datetime(min_time)
-        except:
+        except Exception:
             raise ValueError('min_time is not a datetime object. Check input data.')
         # get observed snow depth
         snow_depth_obs = get_snotel_depth(snotel_df, min_time)
@@ -334,7 +334,7 @@ def produce_liquid_water_depth_fig(summa_df, snotel_df, name, plot_snow=True):
         # make sure mintime is a datetime object
         try:
             min_time = pd.to_datetime(min_time)
-        except:
+        except Exception:
             raise ValueError('min_time is not a datetime object. Check input data.')
 
         # get observed snow depth

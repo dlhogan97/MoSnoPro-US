@@ -1,5 +1,6 @@
 import pytest
-from mosnopro_us.data_manager import *
+from mosnopro_us.data_manager import load_xarray_file_from_dropbox, load_pandas_df_from_dropbox, \
+    load_xarray_file_from_examples, load_pandas_file_from_examples, check_lengths_match, get_snotel_depth
 import pandas as pd
 import xarray as xr
 import streamlit as st
@@ -27,7 +28,7 @@ def test_xarray_db_connection():
     try:
         assert isinstance(ds, xr.Dataset)
         print("Test passed for xarray!")
-    except:
+    except Exception:
         # make sure a ValueError is raised
         unittest.TestCase.assertRaises(ValueError, load_xarray_file_from_examples, db_xr_file)
 
@@ -50,7 +51,7 @@ def test_pandas_db_connection():
     try:
         assert isinstance(df, pd.DataFrame)
         print("Test passed for pandas!")
-    except:
+    except Exception:
         TypeError("SNOTEL data was not loaded correctly.")
 
 
@@ -64,11 +65,12 @@ def test_secrets():
         try:
             assert st.secrets.db_credentials
             print("Test passed for secrets!")
-        except:
+        except Exception:
             assert pytest.raises(FileNotFoundError)
     else:
         assert pytest.raises(FileNotFoundError)
         print("Secrets are not available. Using example data instead. Reach out to authors for credentials.")
+
 
 def test_dropbox_response():
     """
@@ -88,7 +90,7 @@ def test_dropbox_response():
                                   max_retries_on_error=4)
             assert isinstance(dbx.users_get_current_account(), dict)
             print("Test passed for dropbox response!")
-        except:
+        except Exception:
             assert pytest.raises(ConnectionRefusedError)
     else:
         assert pytest.raises(FileNotFoundError)
@@ -185,7 +187,6 @@ def test_min_values():
     Checks if data are valid (if they have successfully be processed to be close to 0 m).
     [edge test]
     """
-    import datetime as dt
     site = "Wells_Creek"
     db_xr_file = f"output/_{site}_timestep.nc"
     db_pd_file = f"snotel_csvs/{site}.csv"
