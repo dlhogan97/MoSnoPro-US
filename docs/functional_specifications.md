@@ -3,19 +3,19 @@
 ## Background
 Like pages of a book, each passing storm during the winter builds what we call the snowpack. Different "pages" in the snowpack book (we call them layers) react and change to the overlying weather conditions throughout the winter. Certain conditions cause layers within the snowpack to become unstable. Instabilities in the snowpack are hard to predict and difficult to manage, but are a main component necessary for avalanches to occur. These avalanches can pose risks to transportation, economic resources, property, and recreation in the area. Understanding when snow falls, how much snow falls, how dense that snow is, and the temperature within layers of the snowpack can provide useful information to predict which layers may become unstable. Models can provide us with a tool to see into the snowpack without needing to go into the field to measure these parameters. 
 
-Avalanche forecasts rely on an accurate understanding of internal snowpack properties (temperature, density, etc.) to effectively communicate hazards to transportation and recreation in mountain environments. However, observations of internal snowpack properties are relatively few and far between since they require avalanche professionals to go into the field to take measurements. MoSnoPro-US offers a solution by providing estimates important snowpack properties in an accessible format. The tool provides near-real time model results from a physically-based 1-D snow model driven by remote weather observations. This provides a way to remotely "see" into the snowpack to track internal snowpack changes that are difficult to capture across a broad area.
+Avalanche forecasts rely on an accurate understanding of internal snowpack properties (temperature, density, etc.) to effectively communicate hazards to transportation and recreation in mountain environments. However, observations of internal snowpack properties are relatively few and far between since they require avalanche professionals to go into the field to take measurements. MoSnoPro-US offers a solution by providing estimates of important snowpack properties in an accessible format. The tool provides near-real time model results from a physically-based 1-D snow model driven by remote weather observations. This provides a way to remotely "see" into the snowpack to track internal snowpack changes that are difficult to capture across a broader area.
 
 
 ## Data Sources
 
-Our data will leverage pandas (dataframes, geoJSONs) to be compatiable with our software visualization tool, Streamlit. 
+Our data will leverage pandas (dataframes, geoJSONs) and xarray (netCDFs) to be compatiable with our software visualization tool, Streamlit. 
 
 ### SUMMA Model Output
-The model we will be using is called SUMMA (Structure for Unifying Multiple Model Alternatives). It has a Python wrapper and can be installed as a Python package. See the documentation [here](https://github.com/UW-Hydro/pysumma). SUMMA is a physically-based 1-D snow model that provides output of internal snowpack properties. We will focus on visualizing attributes of snowpack depth, density, and temperature. 
-- Weather data acquired from select remote snow telemetry (SnoTel) stations throughout Washington located near major recreational areas. 
+The model we will be using is called SUMMA (Structure for Unifying Multiple Model Alternatives). It has a Python wrapper and can be installed as a Python package. See the documentation [here](https://github.com/UW-Hydro/pysumma). In our application, SUMMA is used as a physically-based 1-D snow model that provides output of internal snowpack properties. We will focus on visualizing attributes of snowpack depth, density, and temperature. 
+- Weather data acquired from select remote snow telemetry stations throughout Washington located near major recreational areas. 
 
 ### SNOTEL Site Metadata
-The dataset will be from NRCS (National Resource Conservation Service) SNOTEL (Snow Telemetry) weather stations throughout Washington. We will use a tool called metloom to efficiently access this data. See documentation [here](https://metloom.readthedocs.io/en/latest/). A map of all the sites in the Western United States and Canada is available [here](https://nwcc-apps.sc.egov.usda.gov/imap/).
+The dataset will be from NRCS (National Resource Conservation Service) SNOTEL (Snow Telemetry) weather stations throughout Washington. We will use a tool called `metloom` to efficiently access this data through their API. See documentation [here](https://metloom.readthedocs.io/en/latest/). A map of all the available NRCS SNOTEL sites in the Western United States and Canada is available [here](https://nwcc-apps.sc.egov.usda.gov/imap/).
 
 
 ## User Stories
