@@ -25,14 +25,22 @@ st.set_page_config(
 )
 # if a .streamlit/secrets file exists, then we'll pull data from there
 # otherwise, we'll use the example data
-if os.path.exists('../.streamlit/secrets.toml'):
+try:
+    token = st.secrets.db_credentials.refresh_token
+    app_key = st.secrets.db_credentials.APP_KEY
+    app_secret = st.secrets.db_credentials.APP_SECRET
     # Constants
     SNOTEL_PATH = "/Apps/push-and-pull-pysumma/snotel_csvs/"
     SUMMA_PATH = "/Apps/push-and-pull-pysumma/output/"
-else:
+    # bool for secrets
+    secrets = True
+except Exception: 
     print("Secrets file not found. Using example data instead.")
     SNOTEL_PATH = "snotel_csvs/"
     SUMMA_PATH = "output/"
+    secrets = False
+    pass
+
 
 # Header section
 st.title("MoSnoPro-US Dashboard 🏔️❄️")
@@ -70,7 +78,7 @@ def load_and_filter_data(site, time_slice=None):
     # Path to csv in Dropbox
     db_pd_file = f"{SNOTEL_PATH}{site}.csv"
 
-    if not os.path.exists('../.streamlit/secrets.toml'):
+    if secrets == False:
         snotel_df = data_manager.load_pandas_file_from_examples(db_pd_file)
         summa_ds = data_manager.load_xarray_file_from_examples(db_xr_file)
     else:
